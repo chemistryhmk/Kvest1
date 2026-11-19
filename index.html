@@ -1,0 +1,2611 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Справа № 9: Хто отруїв річку Йонку? | ХімЕксперт</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --desk-bg: #342014;
+      --paper-bg: #f8f1e3;
+      --paper-border: #c8b79b;
+      --typewriter: 'Courier New', Courier, monospace;
+      --ink-color: #1e1b18;
+      --ink-blue: #0d47a1;
+      --stamp-red: #b71c1c;
+      --stamp-green: #1b5e20;
+      --wood-border: #1f120a;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--desk-bg);
+      background-image:
+        radial-gradient(circle at 50% 30%, rgba(255,255,255,0.06) 0%, transparent 70%),
+        repeating-linear-gradient(45deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 2px, transparent 2px, transparent 6px);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--ink-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      user-select: none;
+    }
+
+    /* Верхня панель слідчого */
+    .header-bar {
+      background: #1a110b;
+      border-bottom: 3px solid #4a2c1d;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #ede0d4;
+      font-family: var(--typewriter);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      z-index: 100;
+      flex-shrink: 0;
+    }
+    .header-title {
+      font-weight: bold;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+      font-weight: bold;
+    }
+    .badge-stat {
+      background: #2b1a11;
+      border: 1px solid #5a3825;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Кнопки меню */
+    .desk-btn {
+      background: #5d4037;
+      color: #fff;
+      border: 1px solid #3e2723;
+      padding: 4px 10px;
+      font-family: var(--typewriter);
+      font-size: 0.78rem;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: 0.15s;
+    }
+    .desk-btn:hover { background: #795548; }
+    .desk-btn.accent { background: #1565c0; border-color: #0d47a1; }
+    .desk-btn.danger { background: #b71c1c; border-color: #7f0000; }
+
+    /* ГОЛОВНИЙ РОБОЧИЙ ПРОСТІР */
+    .workspace {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      gap: 22px;
+      width: 96vw;
+      max-width: 1440px;
+      margin: 38px auto 20px auto;
+      padding: 0 12px;
+      flex: 1;
+      align-items: start;
+    }
+
+    /* Ліва колонка: Коркова дошка речових доказів */
+    .cork-board {
+      background: #442718;
+      background-image:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05) 0%, transparent 80%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 2px, transparent 2px, transparent 4px);
+      border: 3px solid #22130a;
+      border-radius: 6px;
+      padding: 14px;
+      color: #ede0d4;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.45);
+      position: sticky;
+      top: 64px;
+    }
+    .cork-title {
+      font-family: var(--typewriter);
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: #ffd54f;
+      border-bottom: 2px dashed #6d4c41;
+      padding-bottom: 8px;
+      margin: 0 0 12px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .evidence-card {
+      background: #fbf5e8;
+      color: #212121;
+      border: 1px solid #cbb998;
+      border-left: 5px solid #8d6e63;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      border-radius: 3px;
+      box-shadow: 1px 2px 4px rgba(0,0,0,0.25);
+      position: relative;
+      font-family: var(--typewriter);
+    }
+    .evidence-card.unlocked {
+      border-left-color: var(--stamp-green);
+      background: #f4faee;
+    }
+    .pin-dot {
+      width: 11px; height: 11px;
+      background: radial-gradient(circle at 30% 30%, #ff5252, #b71c1c);
+      border-radius: 50%;
+      position: absolute;
+      top: 8px; right: 8px;
+    }
+    .ev-header {
+      font-size: 0.88rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #5d4037;
+      margin-bottom: 4px;
+    }
+    .ev-body {
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: #3e2723;
+    }
+
+    /* Права частина: Папка слідчого */
+    .dossier-folder {
+      background: var(--paper-bg);
+      background-image:
+        linear-gradient(to right, rgba(180, 150, 110, 0.1) 0px, transparent 20px),
+        repeating-linear-gradient(0deg, transparent, transparent 27px, rgba(130, 110, 85, 0.05) 28px);
+      border: 1px solid var(--paper-border);
+      border-radius: 2px 10px 4px 4px;
+      padding: 24px 28px 24px 28px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+      position: relative;
+    }
+    .folder-tab {
+      position: absolute;
+      top: -26px;
+      left: 14px;
+      background: var(--paper-bg);
+      border: 1px solid var(--paper-border);
+      border-bottom: none;
+      padding: 3px 20px;
+      border-radius: 6px 6px 0 0;
+      font-family: var(--typewriter);
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: #3e2723;
+    }
+    .folder-header-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 8px;
+      border-bottom: 2px dashed #8d6e63;
+      padding-bottom: 8px;
+    }
+    .stamp-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--stamp-red);
+      border: 2px solid var(--stamp-red);
+      font-family: var(--typewriter);
+      font-weight: bold;
+      font-size: 1rem;
+      padding: 3px 10px;
+      text-transform: uppercase;
+      transform: rotate(-3deg);
+      border-radius: 4px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .stamp-badge.green {
+      color: var(--stamp-green);
+      border-color: var(--stamp-green);
+    }
+
+    h2.dossier-h2 {
+      font-family: var(--typewriter);
+      font-size: 1.4rem;
+      margin: 0;
+      padding: 0;
+      border-bottom: none;
+      text-transform: uppercase;
+      color: #212121;
+      line-height: 1.25;
+    }
+
+    .story-block {
+      font-family: var(--typewriter);
+      font-size: 1.02rem;
+      line-height: 1.55;
+      background: rgba(62, 39, 35, 0.05);
+      border-left: 5px solid #5d4037;
+      padding: 10px 14px;
+      margin: 10px 0 14px 0;
+      color: #1f1c18;
+    }
+
+    .author-credit-box {
+      background: #f1e6d3;
+      border: 1px dashed #a1887f;
+      border-left: 4px solid #5d4037;
+      padding: 8px 12px;
+      margin-top: 14px;
+      font-family: var(--typewriter);
+      font-size: 0.82rem;
+      line-height: 1.45;
+      color: #3e2723;
+    }
+
+    .polaroid-wrap {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0 18px 0;
+    }
+    .polaroid-wrap svg {
+      width: 100%;
+      max-width: 480px;
+      height: auto;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.35));
+    }
+
+    .paper-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .paper-card {
+      background: #fdfaf3;
+      border: 2px solid #c4b497;
+      border-radius: 4px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: 0.15s;
+      text-align: left;
+      position: relative;
+    }
+    .paper-card:hover {
+      border-color: #5d4037;
+      background: #fff;
+      transform: translate(-1px, -1px);
+      box-shadow: 2px 3px 6px rgba(0,0,0,0.15);
+    }
+    .paper-card.selected {
+      border-color: var(--ink-blue);
+      background: #e3f2fd;
+      box-shadow: 0 0 0 2px var(--ink-blue);
+    }
+    .paper-card .check-mark {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: var(--ink-blue);
+      color: #fff;
+      font-size: 0.85rem;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .paper-card.selected .check-mark { display: flex; }
+
+    .action-btn {
+      background: #2c3e50;
+      color: #fff;
+      border: 2px solid #1a252f;
+      padding: 12px 24px;
+      font-family: var(--typewriter);
+      font-size: 1.05rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: 0.15s;
+    }
+    .action-btn:hover { background: #1a252f; }
+    .action-btn.red { background: var(--stamp-red); border-color: #7f0000; }
+    .action-btn.green { background: var(--stamp-green); border-color: #0d3c10; }
+    .action-btn:disabled { background: #7f8c8d; border-color: #555; cursor: not-allowed; }
+
+    .form-field { margin-bottom: 16px; }
+    .form-field label {
+      display: block;
+      font-family: var(--typewriter);
+      font-weight: bold;
+      font-size: 1.02rem;
+      margin-bottom: 6px;
+      color: #3e2723;
+    }
+    .paper-input, .paper-select {
+      width: 100%;
+      padding: 10px 12px;
+      background: #fdfaf3;
+      border: 2px solid #8d6e63;
+      border-bottom: 3px solid #212121;
+      font-family: var(--typewriter);
+      font-size: 1.05rem;
+      font-weight: bold;
+      color: var(--ink-blue);
+      outline: none;
+      border-radius: 3px;
+    }
+    .paper-input:focus, .paper-select:focus {
+      border-color: var(--stamp-red);
+      background: #fff;
+    }
+
+    /* Пробірка */
+    .test-tube-stand {
+      background: #e8d9be;
+      border: 2px solid #bba683;
+      border-radius: 4px;
+      padding: 16px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .test-tube-rim {
+      width: 66px;
+      height: 7px;
+      background: linear-gradient(to right, #cfd8dc, #ffffff, #90a4ae);
+      border: 2px solid #546e7a;
+      border-radius: 3px;
+      margin-bottom: -2px;
+      z-index: 3;
+    }
+    .test-tube-glass {
+      width: 58px;
+      height: 140px;
+      border: 3px solid #607d8b;
+      border-top: none;
+      border-radius: 0 0 28px 28px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(210,235,245,0.2) 45%, rgba(255,255,255,0.4) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .tube-liquid {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: rgba(129, 212, 250, 0.35);
+      border-top: 1px solid rgba(255,255,255,0.6);
+      transition: height 0.35s ease, background-color 0.35s ease;
+      z-index: 1;
+    }
+    .tube-precipitate {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 0px;
+      opacity: 0;
+      border-radius: 0 0 24px 24px;
+      transition: height 0.4s ease, background-color 0.4s ease, opacity 0.4s ease;
+      z-index: 2;
+    }
+    .tube-bubbles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      display: none;
+      z-index: 3;
+    }
+    .tube-bubbles.active { display: block; }
+    .bubble {
+      position: absolute;
+      bottom: 5px;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid rgba(255,255,255,0.9);
+      border-radius: 50%;
+      animation: riseBubble 1.1s infinite ease-in;
+    }
+    .b1 { left: 18%; width: 6px; height: 6px; animation-delay: 0s; }
+    .b2 { left: 45%; width: 8px; height: 8px; animation-delay: 0.3s; }
+    .b3 { left: 68%; width: 5px; height: 5px; animation-delay: 0.6s; }
+    .b4 { left: 32%; width: 7px; height: 7px; animation-delay: 0.8s; }
+    @keyframes riseBubble {
+      0% { transform: translateY(0); opacity: 0; }
+      20% { opacity: 0.95; }
+      80% { opacity: 0.95; }
+      100% { transform: translateY(-75px); opacity: 0; }
+    }
+
+    .feedback-box {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border: 2px dashed;
+      font-family: var(--typewriter);
+      font-weight: bold;
+      font-size: 0.98rem;
+      border-radius: 4px;
+    }
+    .feedback-box.ok {
+      color: var(--stamp-green);
+      border-color: var(--stamp-green);
+      background: rgba(27, 94, 32, 0.08);
+    }
+    .feedback-box.err {
+      color: var(--stamp-red);
+      border-color: var(--stamp-red);
+      background: rgba(183, 28, 28, 0.08);
+    }
+
+    sub { 
+      font-size: 0.58em !important; 
+      font-weight: 800 !important; 
+      vertical-align: -0.35em !important; 
+      line-height: 0 !important; 
+    }
+    sup { 
+      font-size: 0.58em !important; 
+      font-weight: 800 !important; 
+      vertical-align: 0.45em !important; 
+      line-height: 0 !important; 
+    }
+    .chem-eq { font-family: var(--typewriter); font-weight: bold; }
+
+    .court-equation-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .court-eq-token {
+      background: #fffdf8;
+      border: 2px solid #8d6e63;
+      border-radius: 4px;
+      padding: 12px 18px;
+      font-family: var(--typewriter);
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: #1e1b18;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.15);
+    }
+    .court-eq-token:hover {
+      border-color: #3e2723;
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 3px 4px 8px rgba(0,0,0,0.2);
+    }
+
+    /* Модальне вікно: Таблиця розчинності */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    .modal-box {
+      background: var(--paper-bg);
+      border: 3px solid #3e2723;
+      padding: 14px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 4px;
+      font-family: var(--typewriter);
+    }
+    .sol-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.78rem;
+    }
+    .sol-table th, .sol-table td {
+      border: 1px solid #8d6e63;
+      padding: 4px 6px;
+      text-align: center;
+    }
+    .sol-table th { background: #dfcfb2; }
+    .sol-r { background: #c8e6c9; color: #1b5e20; font-weight: bold; }
+    .sol-n { background: #ffcdd2; color: #b71c1c; font-weight: bold; }
+    .sol-m { background: #fff9c4; color: #f57f17; font-weight: bold; }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      background: #212121;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-family: var(--typewriter);
+      font-size: 0.85rem;
+      border-left: 4px solid #fbc02d;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      display: none;
+      z-index: 1000;
+    }
+
+    @media (max-width: 900px) {
+      .workspace { grid-template-columns: 1fr; }
+      .cork-board { position: static; }
+    }
+  
+    /* === Адаптивність: ПК і телефон === */
+    .workspace > * { min-width: 0; }
+    .dossier-folder, .cork-board { max-width: 100%; }
+    .cork-board { max-height: calc(100vh - 84px); overflow-y: auto; }
+    .chem-eq, .ev-body, .story-block, .feedback-box, .paper-card { overflow-wrap: anywhere; }
+    svg, img { max-width: 100%; }
+    input, select, button { max-width: 100%; }
+    @media (max-width: 900px) {
+      .header-bar { flex-wrap: wrap; gap: 6px; padding: 6px 10px; }
+      .header-stats { flex-wrap: wrap; gap: 6px; }
+      .workspace { width: 100%; margin: 30px auto 12px; padding: 0 8px; gap: 16px; }
+      .cork-board { order: 2; max-height: none; }
+      .dossier-folder { padding: 18px 14px; }
+      .folder-header-row { flex-wrap: wrap; }
+    }
+    @media (max-width: 600px) {
+      [style*="grid-template-columns:1fr 160px"], [style*="grid-template-columns:1fr 1fr"], [style*="grid-template-columns:180px 1fr"] { grid-template-columns: 1fr !important; }
+      [style*="justify-content:space-between;margin-top:24px"] { flex-wrap: wrap; gap: 8px; }
+      .test-tube-stand { margin: 0 auto; }
+      .header-title { font-size: 0.82rem; }
+      .desk-btn, .action-btn { min-height: 40px; }
+      .paper-card { min-height: 44px; }
+      .dossier-h2 { font-size: 1.15rem; }
+      .feedback-box > div { flex-direction: column; align-items: stretch !important; gap: 8px; }
+      .modal-box { padding: 12px; max-height: 92vh; }
+    }
+
+    /* === Заповнення екрана і читабельні формули === */
+    html { font-size: clamp(16px, 0.55vw + 10px, 21px); }
+    sub, sup { font-size: 0.72em; line-height: 0; font-family: 'Segoe UI', Arial, sans-serif; font-weight: inherit; }
+    sub { vertical-align: sub; } sup { vertical-align: super; }
+    .workspace { max-width: min(1700px, 96vw); align-items: stretch; min-height: calc(100vh - 110px); }
+    .cork-board { align-self: start; }
+    .dossier-folder { min-height: calc(100vh - 150px); }
+    @media (max-width: 900px) { .workspace { min-height: 0; } .dossier-folder { min-height: 0; } }
+</style>
+</head>
+<body>
+
+  <!-- Верхня панель -->
+  <header class="header-bar">
+    <div class="header-title">
+      <i class="fa-solid fa-magnifying-glass" style="color:#ffd54f;"></i>
+      <span>СПРАВА № 9: «ХТО ОТРУЇВ РІЧКУ ЙОНКУ?»</span>
+    </div>
+    <div class="header-stats">
+      <div class="badge-stat">
+        <i class="fa-solid fa-clock" style="color:#64b5f6;"></i>
+        <span>ЧАС: <strong id="ui-timer">00:00</strong></span>
+      </div>
+      <div class="badge-stat">
+        <i class="fa-solid fa-coins" style="color:#ffd54f;"></i>
+        <span>БЮДЖЕТ: <strong id="ui-coins">100</strong> ХімКоїнів</span>
+      </div>
+      <div class="badge-stat">
+        <i class="fa-solid fa-star" style="color:#ffd54f;"></i>
+        <span>ЗІРКИ: <strong id="ui-stars">0</strong></span>
+      </div>
+      <button onclick="showHint()" class="desk-btn">💡 Підказка (−2)</button>
+      <button onclick="showLedger()" class="desk-btn">💰 Витрати</button>
+      <button onclick="toggleSolubilityModal(true)" class="desk-btn accent">
+        <i class="fa-solid fa-table"></i> Таблиця розчинності
+      </button>
+      <button onclick="resetGame()" class="desk-btn danger">
+        <i class="fa-solid fa-rotate-left"></i> Скинути
+      </button>
+    </div>
+  </header>
+
+  <!-- Робочий простір -->
+  <main class="workspace">
+    <!-- Ліва коркова дошка -->
+    <aside class="cork-board">
+      <div class="cork-title">
+        <span><i class="fa-solid fa-thumbtack" style="color:#ff5252;"></i> ДОШКА ДОКАЗІВ</span>
+        <span id="ui-detective-rank" style="font-size:0.75rem;color:#bcaaa4;">Стажер</span>
+      </div>
+
+      <div id="ev-slot-1" class="evidence-card">
+        <div class="pin-dot"></div>
+        <div class="ev-header">📁 Уліка №1: Підозрювані</div>
+        <div class="ev-body" id="ev-body-1">Накладні сторожа ще не розшифровані...</div>
+      </div>
+
+      <div id="ev-slot-2" class="evidence-card">
+        <div class="pin-dot"></div>
+        <div class="ev-header">🧪 Уліка №2: Йонні відбитки</div>
+        <div class="ev-body" id="ev-body-2">Скорочені рівняння осадів не складено...</div>
+      </div>
+
+      <div id="ev-slot-3" class="evidence-card">
+        <div class="pin-dot"></div>
+        <div class="ev-header">🧰 Уліка №3: Валіза реактивів</div>
+        <div class="ev-body" id="ev-body-3">Реагенти-детектори ще не відібрані...</div>
+      </div>
+
+      <div id="ev-slot-4" class="evidence-card">
+        <div class="pin-dot"></div>
+        <div class="ev-header">🌊 Уліка №4: Експертиза труб</div>
+        <div class="ev-body" id="ev-body-4">Джерело скиду в річку не локалізовано...</div>
+      </div>
+    </aside>
+
+    <!-- Права робоча зона -->
+    <section id="app-container"></section>
+  </main>
+
+  <!-- Модальне вікно: Таблиця розчинності -->
+  <div id="sol-modal" class="modal-overlay">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #5d4037;padding-bottom:6px;">
+        <h3 style="margin:0;font-size:1.1rem;color:#3e2723;"><i class="fa-solid fa-flask"></i> КРИМІНАЛІСТИЧНА ТАБЛИЦЯ РОЗЧИННОСТІ КИСЛОТ, СОЛЕЙ ТА ОСНОВ</h3>
+        <button onclick="toggleSolubilityModal(false)" class="desk-btn danger">✖ Закрити</button>
+      </div>
+      <p style="font-size:0.8rem;color:#5d4037;margin:6px 0;">
+        Умовні позначення: <span class="sol-r" style="padding:2px 4px;">Р</span> — розчинна; <span class="sol-m" style="padding:2px 4px;">М</span> — малорозчинна (випадає в осад); <span class="sol-n" style="padding:2px 4px;">Н</span> — нерозчинна (осад).
+      </p>
+      <div style="overflow-x:auto;">
+        <table class="sol-table">
+          <thead>
+            <tr>
+              <th>Йони</th>
+              <th>OH<sup>−</sup></th>
+              <th>NO<sub>3</sub><sup>−</sup></th>
+              <th>Cl<sup>−</sup></th>
+              <th>SO<sub>4</sub><sup>2−</sup></th>
+              <th>CO<sub>3</sub><sup>2−</sup></th>
+              <th>I<sup>−</sup></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th>H<sup>+</sup></th><td class="sol-r">Р (вода)</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р (газ CO₂)</td><td class="sol-r">Р</td></tr>
+            <tr><th>Na<sup>+</sup></th><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td></tr>
+            <tr><th>K<sup>+</sup></th><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td></tr>
+            <tr><th>Ba<sup>2+</sup></th><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-n">Н (білий осад)</td><td class="sol-n">Н (білий осад)</td><td class="sol-r">Р</td></tr>
+            <tr><th>Cu<sup>2+</sup></th><td class="sol-n">Н (синій осад)</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-r">Р</td><td class="sol-n">Н (осад)</td><td class="sol-n">Н (бурий/розклад)</td></tr>
+            <tr><th>Pb<sup>2+</sup></th><td class="sol-n">Н (білий осад)</td><td class="sol-r">Р</td><td class="sol-m">М (білий осад)</td><td class="sol-n">Н (білий осад)</td><td class="sol-n">Н (білий осад)</td><td class="sol-n">Н (жовтий осад)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast-msg"></div>
+
+  <script>
+    // =========================================================================
+    // ВАША URL-АДРЕСА GOOGLE APPS SCRIPT ДЛЯ ЗБОРУ РЕЗУЛЬТАТІВ У ТАБЛИЦЮ
+    // =========================================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx3xX5TQZM4-ve6rntsghU2B6F8kO-ExT-m8XOfQKphLrydvpF0kCMt4rhw9WpeWAQS/exec";
+
+    // --- Звукові ефекти через Web Audio API ---
+    const Sound = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+      },
+      tone(freq, dur, type = 'sine') {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + dur);
+        } catch (e) {}
+      },
+      pour() { this.tone(420, 0.12, 'triangle'); },
+      success() {
+        this.tone(523, 0.1, 'sine');
+        setTimeout(() => this.tone(659, 0.1, 'sine'), 100);
+        setTimeout(() => this.tone(783, 0.2, 'sine'), 200);
+      },
+      error() {
+        this.tone(200, 0.18, 'sawtooth');
+        setTimeout(() => this.tone(160, 0.22, 'sawtooth'), 120);
+      }
+    };
+
+    const clone = o => JSON.parse(JSON.stringify(o));
+
+    function shuffleArray(arr) {
+      const copy = [...arr];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function formatChem(text) {
+      if (!text) return '';
+      let s = String(text);
+      s = s.replace(/Ba2\+/g, 'Ba<sup>2+</sup>')
+           .replace(/Pb2\+/g, 'Pb<sup>2+</sup>')
+           .replace(/Cu2\+/g, 'Cu<sup>2+</sup>')
+           .replace(/SO42\-/g, 'SO<sub>4</sub><sup>2−</sup>')
+           .replace(/CO32\-/g, 'CO<sub>3</sub><sup>2−</sup>')
+           .replace(/NO3\-/g, 'NO<sub>3</sub><sup>−</sup>')
+           .replace(/OH\-/g, 'OH<sup>−</sup>')
+           .replace(/Cl\-/g, 'Cl<sup>−</sup>')
+           .replace(/I\-/g, 'I<sup>−</sup>')
+           .replace(/H\+/g, 'H<sup>+</sup>')
+           .replace(/Na\+/g, 'Na<sup>+</sup>')
+           .replace(/K\+/g, 'K<sup>+</sup>');
+
+      s = s.replace(/Pb\(NO3\)2/g, 'Pb(NO<sub>3</sub>)<sub>2</sub>')
+           .replace(/CuSO4/g, 'CuSO<sub>4</sub>')
+           .replace(/BaCl2/g, 'BaCl<sub>2</sub>')
+           .replace(/Na2SO4/g, 'Na<sub>2</sub>SO<sub>4</sub>')
+           .replace(/Na2CO3/g, 'Na<sub>2</sub>CO<sub>3</sub>')
+           .replace(/PbI2/g, 'PbI<sub>2</sub>')
+           .replace(/Cu\(OH\)2/g, 'Cu(OH)<sub>2</sub>')
+           .replace(/BaSO4/g, 'BaSO<sub>4</sub>')
+           .replace(/PbSO4/g, 'PbSO<sub>4</sub>')
+           .replace(/BaCO3/g, 'BaCO<sub>3</sub>')
+           .replace(/KNO3/g, 'KNO<sub>3</sub>')
+           .replace(/HNO3/g, 'HNO<sub>3</sub>')
+           .replace(/H2SO4/g, 'H<sub>2</sub>SO<sub>4</sub>')
+           .replace(/H2O/g, 'H<sub>2</sub>O')
+           .replace(/CO2/g, 'CO<sub>2</sub>');
+
+      return s;
+    }
+
+    // --- Стан гри ---
+    const defaultState = {
+      version: 3,
+      sid: '',
+      reportSent: false,
+      stageMistakes: {},
+      ledger: [],
+      stage: 1,
+      coins: 100,
+      stars: 0,
+      mistakes: 0,
+      detectiveName: '',
+      school: '',
+      city: '',
+      startTime: null,
+      endTime: null,
+      verdictData: {
+        accused: '«Свинець-М» (скид Pb(NO₃)₂)',
+        cleaning: 'Na₂SO₄ (осадження PbSO₄↓)'
+      },
+      evidence: {
+        suspectsUnlocked: false,
+        fingerprintsUnlocked: false,
+        kitUnlocked: false,
+        pipeUnlocked: false,
+        culpritPipe: 'pipeB',
+        pipeTestCount: 0,
+        tested: {}
+      },
+      pipeMapping: {
+        pipeA: 'copper',
+        pipeB: 'lead',
+        pipeC: 'dye'
+      }
+    };
+
+    let gameState = clone(defaultState);
+    let timerInterval = null;
+
+    function countStageMistake() {
+      const k = 'S' + gameState.stage;
+      gameState.stageMistakes[k] = (gameState.stageMistakes[k] || 0) + 1;
+    }
+
+    function randomizePipes() {
+      const pipes = ['pipeA', 'pipeB', 'pipeC'];
+      const types = shuffleArray(['lead', 'copper', 'dye']);
+      gameState.pipeMapping = {};
+      pipes.forEach((p, i) => {
+        gameState.pipeMapping[p] = types[i];
+        if (types[i] === 'lead') gameState.evidence.culpritPipe = p;
+      });
+      gameState.evidence.pipeTestCount = 0;
+      gameState.evidence.tested = {};
+      gameState.ledger = [];
+    }
+
+    let penaltyKeys = {}, rewardGiven = false;
+    const SHEET = {2:'Школа слідів',3:'Бюджет реактивів',4:'Записка сторожа',5:'Відбитки пальців',6:'Протест адвоката',7:'Валіза реактивів',8:'Ключова проба',9:'Очищення річки',10:'Суд'};
+    function applyPenalty(n, key, reason, isMistake = true) {
+      if (penaltyKeys[key]) return false;
+      penaltyKeys[key] = true;
+      if (isMistake) { gameState.mistakes++; countStageMistake(); }
+      if (n > 0) {
+        gameState.coins = Math.max(0, gameState.coins - n);
+        (gameState.ledger = gameState.ledger || []).push({ st: gameState.stage, n: -n, r: reason });
+        showToast('−' + n + ' ХімКоїнів: ' + reason);
+      }
+      return true;
+    }
+    function awardStars(n) {
+      if (rewardGiven) return;
+      rewardGiven = true;
+      gameState.stars += n;
+    }
+    function openInfo(title, html) {
+      let m = document.getElementById('info-modal');
+      if (!m) { m = document.createElement('div'); m.id = 'info-modal'; m.className = 'modal-overlay'; document.body.appendChild(m); }
+      m.innerHTML = '<div class="modal-box"><h3 style="font-family:var(--typewriter);margin-top:0;">' + title + '</h3>' + html + '<div style="margin-top:12px;"><button class="desk-btn danger" onclick="document.getElementById(\'info-modal\').style.display=\'none\'">✖ Закрити</button></div></div>';
+      m.style.display = 'flex';
+    }
+    function showLedger() {
+      const L = gameState.ledger || [];
+      const spent = L.reduce((a, x) => a - x.n, 0);
+      const rows = L.length ? L.map(x => '<tr><td>Аркуш ' + (x.st - 1) + ' · ' + (SHEET[x.st] || '') + '</td><td>' + x.r + '</td><td style="color:#b71c1c;font-weight:bold;">' + x.n + '</td></tr>').join('') : '<tr><td colspan="3">Поки що витрат немає.</td></tr>';
+      openInfo('💰 Як рахуються ХімКоїни',
+        '<p style="font-family:var(--typewriter);line-height:1.6;">Старт: <b>100</b> ХімКоїнів.<br>• Помилка у питанні: <b>−10</b> (один раз на питання, повторні спроби безкоштовні).<br>• Хибне звинувачення труби: <b>−15</b> (за кожну іншу трубу).<br>• Дослід з реагентом: <b>−3</b> (один раз для пари «пробірка + реагент»).<br>• Підказка: <b>−2</b> (раз на питання).<br>Звання «Експерт»: від 25 зірок і 70 ХімКоїнів; «Лаборант»: від 16 зірок.</p>' +
+        '<div style="overflow-x:auto;"><table style="border-collapse:collapse;width:100%;font-family:var(--typewriter);font-size:0.9rem;"><tr><th align="left">Де</th><th align="left">За що</th><th align="left">Сума</th></tr>' + rows + '</table></div>' +
+        '<p style="font-family:var(--typewriter);"><b>Витрачено: ' + spent + ' · Залишок: ' + gameState.coins + '</b></p>');
+    }
+    function hintText() {
+      const s = gameState.stage;
+      if (s === 2) return ['Білий осад дають йони Ba²⁺ і SO₄²⁻ (Н у таблиці).', 'Газ CO₂ виділяється, коли кислота діє на карбонат.', 'Нейтралізація: кислота + луг → вода.'][currentS1Mission];
+      if (s === 3) return 'Обміняйте йони місцями й перевірте нові речовини в таблиці розчинності: осад (Н), газ чи вода? Якщо нічого з цього немає — реакції немає.';
+      if (s === 4) return 'Індекс біля йона стає коефіцієнтом, а заряд йона дорівнює валентності металу чи кислотного залишку.';
+      if (s === 5) return FP_RULE[fpSub];
+      if (s === 6) return 'У повному йонному рівнянні осад ↓, газ і воду не розписують. Перевірте також заряди йонів.';
+      if (s === 7) return 'Потрібні реагенти, що дають різні осади з Cu²⁺, Pb²⁺, Ba²⁺: гідроксид, йодид і сульфат.';
+      if (s === 8) return 'Порівняйте осади в річці й трубах: збігатися мають усі три проби. Жовтий осад з йодидом дає лише свинець.';
+      if (s === 9) return 'Реагент має осадити Pb²⁺ і не змінити кислотність води.';
+      return 'На цьому аркуші підказки немає.';
+    }
+    function showHint() {
+      const s = gameState.stage;
+      if (s < 2 || s > 9) { showToast('На цьому аркуші підказки немає'); return; }
+      applyPenalty(2, 'hint', 'підказка', false);
+      saveState();
+      openInfo('💡 Підказка', '<p style="font-family:var(--typewriter);line-height:1.6;">' + hintText() + '</p>');
+    }
+
+    function startTimer() {
+      if (!gameState.startTime) gameState.startTime = Date.now();
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        if (gameState.stage >= 11) {
+          clearInterval(timerInterval);
+          return;
+        }
+        const diff = Math.floor((Date.now() - gameState.startTime) / 1000);
+        const m = String(Math.floor(diff / 60)).padStart(2, '0');
+        const s = String(diff % 60).padStart(2, '0');
+        const el = document.getElementById('ui-timer');
+        if (el) el.textContent = `${m}:${s}`;
+      }, 1000);
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('chemCase9_state', JSON.stringify(gameState));
+      } catch (e) {}
+      updateHeaderUI();
+      updateEvidenceBoard();
+    }
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem('chemCase9_state');
+        if (saved) {
+          const sv = JSON.parse(saved);
+          if (sv.version === 3) gameState = { ...clone(defaultState), ...sv, evidence: { ...clone(defaultState).evidence, ...(sv.evidence || {}) } };
+          if (gameState.startTime && gameState.stage > 1 && gameState.stage < 11) {
+            startTimer();
+          }
+        }
+      } catch (e) {
+        gameState = clone(defaultState);
+      }
+    }
+
+    function resetGame() {
+      if (confirm('Почати розслідування спочатку? Увесь прогрес буде скинуто.')) {
+        if (timerInterval) clearInterval(timerInterval);
+        localStorage.removeItem('chemCase9_state');
+        gameState = JSON.parse(JSON.stringify(defaultState));
+        const pipes = ['pipeA', 'pipeB', 'pipeC'];
+        const types = shuffleArray(['lead', 'copper', 'dye']);
+        gameState.pipeMapping = {
+          [pipes[0]]: types[0],
+          [pipes[1]]: types[1],
+          [pipes[2]]: types[2]
+        };
+        for (const [p, t] of Object.entries(gameState.pipeMapping)) {
+          if (t === 'lead') gameState.evidence.culpritPipe = p;
+        }
+        gameState.sid = '';
+        currentS1Mission = 0;
+        currentBudgetStep = 0;
+        currentGuardStep = 0;
+        currentFingerprintStep = 0;
+        fpSub = 0;
+        currentLawyerStep = 0;
+        saveState();
+        renderCurrentStage();
+        showToast('Справу скинуто. Починаємо спочатку!');
+      }
+    }
+
+    function updateHeaderUI() {
+      document.getElementById('ui-coins').textContent = gameState.coins;
+      document.getElementById('ui-stars').textContent = gameState.stars;
+      const rankElem = document.getElementById('ui-detective-rank');
+      if (rankElem) {
+        if (gameState.stars >= 25 && gameState.coins >= 70) rankElem.textContent = 'Експерт';
+        else if (gameState.stars >= 16) rankElem.textContent = 'Лаборант';
+        else rankElem.textContent = 'Стажер';
+      }
+    }
+
+    function updateEvidenceBoard() {
+      const b1 = document.getElementById('ev-body-1');
+      const b2 = document.getElementById('ev-body-2');
+      const b3 = document.getElementById('ev-body-3');
+      const b4 = document.getElementById('ev-body-4');
+
+      const s1 = document.getElementById('ev-slot-1');
+      const s2 = document.getElementById('ev-slot-2');
+      const s3 = document.getElementById('ev-slot-3');
+      const s4 = document.getElementById('ev-slot-4');
+
+      if (gameState.evidence.suspectsUnlocked) {
+        s1.classList.add('unlocked');
+        b1.innerHTML = formatChem('«Свинець-М»: Pb2+<br>«МідьПлюс»: Cu2+<br>«Барвник»: Ba2+');
+      } else {
+        s1.classList.remove('unlocked');
+        b1.textContent = 'Накладні сторожа ще не розшифровані...';
+      }
+
+      if (gameState.evidence.fingerprintsUnlocked) {
+        s2.classList.add('unlocked');
+        b2.innerHTML = formatChem('💙 Cu(OH)2↓ (синій)<br>💛 PbI2↓ (жовтий)<br>🤍 BaSO4↓ (білий)');
+      } else {
+        s2.classList.remove('unlocked');
+        b2.textContent = 'Скорочені рівняння осадів не складено...';
+      }
+
+      if (gameState.evidence.kitUnlocked) {
+        s3.classList.add('unlocked');
+        b3.innerHTML = formatChem('Валіза готова: NaOH, KI, Na2SO4');
+      } else {
+        s3.classList.remove('unlocked');
+        b3.textContent = 'Реагенти-детектори ще не відібрані...';
+      }
+
+      if (gameState.evidence.pipeUnlocked) {
+        s4.classList.add('unlocked');
+        b4.innerHTML = formatChem('Винна труба: Pb2+ збігається з річкою!');
+      } else {
+        s4.classList.remove('unlocked');
+        b4.textContent = 'Джерело скиду в річку не локалізовано...';
+      }
+    }
+
+    function showToast(text) {
+      const t = document.getElementById('toast');
+      t.textContent = text;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3200);
+    }
+
+    function toggleSolubilityModal(show) {
+      document.getElementById('sol-modal').style.display = show ? 'flex' : 'none';
+    }
+
+    function advanceToStage(nextStage) {
+      gameState.stage = nextStage;
+      if (nextStage === 11) {
+        if (!gameState.endTime) gameState.endTime = Date.now();
+        if (timerInterval) clearInterval(timerInterval);
+      }
+      saveState();
+      renderCurrentStage();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- Polaroid SVG ---
+    const ICONS_SVG = {
+      intro: `<div class="polaroid-wrap">
+        <svg viewBox="0 0 380 220" style="background:#fcf8f0;border:1px solid #dcd1ba;border-radius:3px;padding:8px 8px 24px 8px;">
+          <defs>
+            <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1c2833"/>
+              <stop offset="50%" stop-color="#2c3e50"/>
+              <stop offset="100%" stop-color="#34495e"/>
+            </linearGradient>
+            <linearGradient id="riverGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1f618d" stop-opacity="0.85"/>
+              <stop offset="50%" stop-color="#117864" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#0e6251"/>
+            </linearGradient>
+            <linearGradient id="factoryGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#212f3d"/>
+              <stop offset="100%" stop-color="#17202a"/>
+            </linearGradient>
+            <filter id="smokeBlur" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3"/>
+            </filter>
+          </defs>
+          <rect x="0" y="0" width="364" height="170" fill="url(#skyGrad)"/>
+          <ellipse cx="65" cy="40" rx="18" ry="10" fill="#7f8c8d" opacity="0.4" filter="url(#smokeBlur)"/>
+          <ellipse cx="75" cy="28" rx="24" ry="12" fill="#95a5a6" opacity="0.3" filter="url(#smokeBlur)"/>
+          <ellipse cx="140" cy="35" rx="16" ry="8" fill="#7f8c8d" opacity="0.35" filter="url(#smokeBlur)"/>
+          <rect x="50" y="55" width="14" height="50" fill="url(#factoryGrad)"/>
+          <rect x="68" y="65" width="10" height="40" fill="url(#factoryGrad)"/>
+          <polygon points="45,105 57,75 75,75 85,105" fill="#1c2833"/>
+          <rect x="125" y="60" width="16" height="45" fill="url(#factoryGrad)"/>
+          <rect x="180" y="70" width="35" height="35" fill="#1b2631"/>
+          <polygon points="180,70 197,55 215,70" fill="#17202a"/>
+          <path d="M0 102 Q100 98 220 102 T364 100 L364 108 L0 108 Z" fill="#2d3748"/>
+          <line x1="230" y1="96" x2="364" y2="96" stroke="#4a5568" stroke-width="2"/>
+          <line x1="260" y1="96" x2="260" y2="104" stroke="#4a5568" stroke-width="1.5"/>
+          <line x1="300" y1="96" x2="300" y2="104" stroke="#4a5568" stroke-width="1.5"/>
+          <line x1="340" y1="96" x2="340" y2="104" stroke="#4a5568" stroke-width="1.5"/>
+          <path d="M0 106 Q90 100 190 108 T364 105 L364 170 L0 170 Z" fill="url(#riverGrad)"/>
+          <path d="M20 120 Q120 115 220 122 T360 118" stroke="#5dade2" stroke-width="1.2" fill="none" opacity="0.6"/>
+          <path d="M0 138 Q100 132 200 140 T364 135" stroke="#48c9b0" stroke-width="1" fill="none" opacity="0.5"/>
+          <path d="M40 155 Q140 150 260 158 T364 152" stroke="#5dade2" stroke-width="1.5" fill="none" opacity="0.4"/>
+          <g transform="translate(190, 126) rotate(12)">
+            <ellipse cx="25" cy="10" rx="20" ry="8" fill="#e5e8e8" stroke="#95a5a6" stroke-width="1"/>
+            <polygon points="43,10 54,4 51,16" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="0.8"/>
+            <path d="M18 10 Q26 4 34 10" stroke="#bdc3c7" fill="none" stroke-width="1"/>
+            <line x1="10" y1="8" x2="14" y2="12" stroke="#c0392b" stroke-width="1.5"/>
+            <line x1="14" y1="8" x2="10" y2="12" stroke="#c0392b" stroke-width="1.5"/>
+          </g>
+          <g transform="translate(110, 142) rotate(-8)">
+            <ellipse cx="20" cy="8" rx="16" ry="6.5" fill="#d5dbdb" stroke="#95a5a6" stroke-width="1"/>
+            <polygon points="34,8 43,3 41,13" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="0.8"/>
+            <line x1="8" y1="6" x2="11" y2="10" stroke="#c0392b" stroke-width="1.2"/>
+            <line x1="11" y1="6" x2="8" y2="10" stroke="#c0392b" stroke-width="1.2"/>
+          </g>
+          <path d="M0 156 Q80 150 140 170 L0 170 Z" fill="#3e2723" opacity="0.85"/>
+          <ellipse cx="30" cy="164" rx="14" ry="6" fill="#5d4037"/>
+          <ellipse cx="65" cy="166" rx="10" ry="4" fill="#4e342e"/>
+          <ellipse cx="95" cy="167" rx="8" ry="3" fill="#6d4c41"/>
+          <g transform="translate(18, 118)">
+            <polygon points="14,38 4,38 10,8 18,8" fill="#f39c12" stroke="#d35400" stroke-width="1.5"/>
+            <polygon points="12,18 7,30 17,30 15,18" fill="#ffffff"/>
+            <text x="12" y="36" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#212121" text-anchor="middle">A</text>
+            <ellipse cx="11" cy="38" rx="10" ry="2" fill="#000" opacity="0.3"/>
+          </g>
+          <text x="182" y="194" font-family="'Courier New', Courier, monospace" font-size="13" font-weight="bold" fill="#2c3e50" text-anchor="middle">
+            ДОКАЗ № 01: Річка Йонка, 08:15 ранку
+          </text>
+          <text x="182" y="208" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#7f8c8d" text-anchor="middle">
+            Сектор мору риби нижче промислового колектора
+          </text>
+        </svg>
+      </div>`,
+
+      tubes: `<div class="polaroid-wrap">
+        <svg viewBox="0 0 380 220" style="background:#fcf8f0;border:1px solid #dcd1ba;border-radius:3px;padding:8px 8px 24px 8px;">
+          <defs>
+            <linearGradient id="labBg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1a252f"/>
+              <stop offset="100%" stop-color="#2c3e50"/>
+            </linearGradient>
+            <linearGradient id="woodStand" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#4e342e"/>
+              <stop offset="50%" stop-color="#6d4c41"/>
+              <stop offset="100%" stop-color="#3e2723"/>
+            </linearGradient>
+            <linearGradient id="glassReflection" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6"/>
+              <stop offset="30%" stop-color="#b3e5fc" stop-opacity="0.15"/>
+              <stop offset="80%" stop-color="#b3e5fc" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#ffffff" stop-opacity="0.5"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="364" height="170" fill="url(#labBg)"/>
+          <line x1="0" y1="135" x2="364" y2="135" stroke="#34495e" stroke-width="2"/>
+          <rect x="40" y="125" width="284" height="14" rx="2" fill="url(#woodStand)" stroke="#271c19"/>
+          <rect x="46" y="55" width="272" height="10" rx="2" fill="url(#woodStand)" stroke="#271c19"/>
+          <rect x="52" y="65" width="12" height="60" fill="url(#woodStand)"/>
+          <rect x="300" y="65" width="12" height="60" fill="url(#woodStand)"/>
+
+          <g transform="translate(85, 30)">
+            <path d="M10 0 L10 90 A12 12 0 0 0 34 90 L34 0 Z" fill="url(#glassReflection)" stroke="#b0bec5" stroke-width="1.5"/>
+            <ellipse cx="22" cy="0" rx="12" ry="2.5" fill="#eceff1" stroke="#90a4ae" stroke-width="1.2"/>
+            <path d="M11 40 L11 90 A11 11 0 0 0 33 90 L33 40 Z" fill="rgba(224, 247, 250, 0.3)"/>
+            <path d="M11 76 L11 90 A11 11 0 0 0 33 90 L33 76 Q22 73 11 76 Z" fill="#ffffff" stroke="#cfd8dc" stroke-width="0.8"/>
+            <line x1="14" y1="15" x2="14" y2="70" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+          </g>
+
+          <g transform="translate(160, 30)">
+            <path d="M10 0 L10 90 A12 12 0 0 0 34 90 L34 0 Z" fill="url(#glassReflection)" stroke="#b0bec5" stroke-width="1.5"/>
+            <ellipse cx="22" cy="0" rx="12" ry="2.5" fill="#eceff1" stroke="#90a4ae" stroke-width="1.2"/>
+            <path d="M11 35 L11 90 A11 11 0 0 0 33 90 L33 35 Z" fill="rgba(227, 242, 253, 0.35)"/>
+            <circle cx="18" cy="82" r="2.5" fill="#ffffff" opacity="0.9"/>
+            <circle cx="26" cy="74" r="3" fill="#ffffff" opacity="0.9"/>
+            <circle cx="20" cy="62" r="3.5" fill="#ffffff" opacity="0.9"/>
+            <circle cx="25" cy="50" r="2.5" fill="#ffffff" opacity="0.9"/>
+            <circle cx="18" cy="42" r="3.2" fill="#ffffff" opacity="0.9"/>
+            <line x1="14" y1="15" x2="14" y2="70" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+          </g>
+
+          <g transform="translate(235, 30)">
+            <path d="M10 0 L10 90 A12 12 0 0 0 34 90 L34 0 Z" fill="url(#glassReflection)" stroke="#b0bec5" stroke-width="1.5"/>
+            <ellipse cx="22" cy="0" rx="12" ry="2.5" fill="#eceff1" stroke="#90a4ae" stroke-width="1.2"/>
+            <path d="M11 45 L11 90 A11 11 0 0 0 33 90 L33 45 Z" fill="rgba(238, 242, 245, 0.25)"/>
+            <line x1="14" y1="15" x2="14" y2="70" stroke="#ffffff" stroke-width="1.2" opacity="0.7"/>
+          </g>
+
+          <g transform="translate(48, 108)">
+            <polygon points="14,34 4,34 10,8 18,8" fill="#f39c12" stroke="#d35400" stroke-width="1.2"/>
+            <text x="11" y="27" font-family="'Courier New', monospace" font-size="10" font-weight="bold" fill="#000" text-anchor="middle">1</text>
+          </g>
+
+          <text x="182" y="194" font-family="'Courier New', Courier, monospace" font-size="13" font-weight="bold" fill="#2c3e50" text-anchor="middle">
+            ДОКАЗ № 02: Три ознаки йонних реакцій
+          </text>
+          <text x="182" y="208" font-family="'Courier New', Courier, monospace" font-size="9.5" fill="#7f8c8d" text-anchor="middle">
+            1: осад на дні (↓) • 2: виділення газу (↑) • 3: утворення води (H₂O)
+          </text>
+        </svg>
+      </div>`
+    };
+
+    // --- ЕТАП 1 (Вступ / Авторизація) ---
+    function renderStageIntro(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">ВХІДНИЙ КОНТРОЛЬ</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">Посвідчення слідчого-хіміка</h2>
+            <div class="stamp-badge">ТЕРМІНОВО</div>
+          </div>
+          ${ICONS_SVG.intro}
+
+          <div class="story-block">
+            <strong>Екстрене повідомлення мера:</strong> «У річці Йонці масово загинула риба! Вода біля міського мосту має синюватий відтінок. Громада звинувачує гальванічний цех "МідьПлюс". Професор Йон заперечує: <em>"Очам не вірте. Вірте лише скороченим йонним рівнянням та осадкам на дні!"</em>».
+          </div>
+
+          <form onsubmit="handleStartCase(event)" style="margin-top:6px;">
+            <div class="form-field">
+              <label>Прізвище та Ім'я слідчого-експерта:</label>
+              <input type="text" id="inp-name" class="paper-input" required placeholder="Наприклад: Коваленко Максим" value="${gameState.detectiveName || ''}">
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="form-field">
+                <label>Заклад освіти / Клас / Група:</label>
+                <input type="text" id="inp-school" class="paper-input" required placeholder="Ліцей № 4, 9-А клас" value="${gameState.school || ''}">
+              </div>
+              <div class="form-field">
+                <label>Місто / Село:</label>
+                <input type="text" id="inp-city" class="paper-input" required placeholder="м. Харків" value="${gameState.city || ''}">
+              </div>
+            </div>
+
+            <button type="submit" class="action-btn red" style="margin-top:8px;width:100%;">
+              <i class="fa-solid fa-folder-open"></i> ПРИЙНЯТИ СПРАВУ № 9 ДО ПРОВАДЖЕННЯ
+            </button>
+          </form>
+
+          <div class="author-credit-box">
+            <div>💡 <strong>Автор ідеї та методичної концепції:</strong> Світлана Олександрівна Ольховська, викладач хімії (м. Харків).</div>
+            <div style="margin-top:3px;color:#5d4037;">⚙️ <strong>Технічна реалізація:</strong> Програмний код та візуалізацію створено за допомогою ШІ-асистента за завданням і під керівництвом автора.</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleStartCase(e) {
+      e.preventDefault();
+      Sound.success();
+      gameState.detectiveName = document.getElementById('inp-name').value.trim();
+      gameState.school = document.getElementById('inp-school').value.trim();
+      gameState.city = document.getElementById('inp-city').value.trim();
+      randomizePipes();
+      gameState.sid = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+      gameState.reportSent = false;
+      gameState.stageMistakes = {};
+      startTimer();
+      advanceToStage(2);
+    }
+
+    // --- ЕТАП 2 (Школа слідів Професора Йона) ---
+    const stage1Missions = [
+      {
+        title: 'Місія 1 з 3: Добудьте білий нерозчинний осад на дні',
+        desc: 'Оберіть на полиці ДВА флакони, зливання яких спричинить випадання нерозчинного білого кристалічного осаду на дні. За потреби скористайтеся Таблицею розчинності вгорі.',
+        shelf: [
+          { id: 'BaCl2', f: 'BaCl₂', n: 'Барій хлорид' },
+          { id: 'Na2SO4', f: 'Na₂SO₄', n: 'Натрій сульфат' },
+          { id: 'NaCl', f: 'NaCl', n: 'Натрій хлорид' },
+          { id: 'KNO3', f: 'KNO₃', n: 'Калій нітрат' },
+          { id: 'HCl', f: 'HCl', n: 'Хлоридна кислота' },
+          { id: 'NaOH', f: 'NaOH', n: 'Натрій гідроксид' }
+        ],
+        target: 'BaCl2+Na2SO4',
+        effect: 'precipitate_white',
+        successMsg: 'Чудово! Отримано нерозчинний білий осад барій сульфату за рівнянням: Ba²⁺ + SO₄²⁻ → BaSO₄↓'
+      },
+      {
+        title: 'Місія 2 з 3: Добудьте газ (бурхливе виділення бульбашок)',
+        desc: 'Оберіть ДВА флакони, взаємодія яких викличе бурхливе шипіння та виділення газу.',
+        shelf: [
+          { id: 'HCl', f: 'HCl', n: 'Хлоридна кислота' },
+          { id: 'Na2CO3', f: 'Na₂CO₃', n: 'Натрій карбонат' },
+          { id: 'NaCl', f: 'NaCl', n: 'Натрій хлорид' },
+          { id: 'KNO3', f: 'KNO₃', n: 'Калій нітрат' },
+          { id: 'Na2SO4', f: 'Na₂SO₄', n: 'Натрій сульфат' },
+          { id: 'NaOH', f: 'NaOH', n: 'Натрій гідроксид' }
+        ],
+        target: 'HCl+Na2CO3',
+        effect: 'gas',
+        successMsg: 'Точно! Кислота розкладає карбонат з виділенням вуглекислого газу: 2H⁺ + CO₃²⁻ → H₂O + CO₂↑'
+      },
+      {
+        title: 'Місія 3 з 3: Реакція нейтралізації (без видимих змін)',
+        desc: 'Оберіть ДВА флакони, при змішуванні яких відбувається реакція нейтралізації з утворенням води (розчин залишається абсолютно прозорим).',
+        shelf: [
+          { id: 'HCl', f: 'HCl', n: 'Хлоридна кислота' },
+          { id: 'NaOH', f: 'NaOH', n: 'Натрій гідроксид' },
+          { id: 'NaCl', f: 'NaCl', n: 'Натрій хлорид' },
+          { id: 'KNO3', f: 'KNO₃', n: 'Калій нітрат' },
+          { id: 'Na2SO4', f: 'Na₂SO₄', n: 'Натрій сульфат' }
+        ],
+        target: 'HCl+NaOH',
+        effect: 'neutral',
+        successMsg: 'Правильно! Відбулася нейтралізація з утворенням слабкого електроліту (води): H⁺ + OH⁻ → H₂O. Осаду й газу немає.'
+      }
+    ];
+
+    let currentS1Mission = 0;
+    let s1Picked = [];
+
+    function renderStage1(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      const m = stage1Missions[currentS1Mission];
+      const shelf = shuffleArray(m.shelf);
+
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">АРКУШ 1 • ШКОЛА СЛІДІВ</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">Лабораторний тренажер ознак реакцій</h2>
+            <div class="stamp-badge">ІСПИТ (${currentS1Mission + 1}/3)</div>
+          </div>
+          ${ICONS_SVG.tubes}
+
+          <div class="story-block">
+            <strong>🎯 ${m.title}</strong><br>
+            ${formatChem(m.desc)}
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 160px;gap:12px;align-items:center;">
+            <div>
+              <div style="font-family:var(--typewriter);font-weight:bold;font-size:0.8rem;margin-bottom:4px;">
+                ЛАБОРАТОРНА ПОЛИЦЯ (оберіть 2 флакони):
+              </div>
+              <div class="paper-grid">
+                ${shelf.map(r => `
+                  <div onclick="selectS1Reagent('${r.id}')" id="card-s1-${r.id}" class="paper-card">
+                    <div class="check-mark">✓</div>
+                    <div class="chem-eq" style="font-size:1.05rem;color:var(--ink-blue);">${formatChem(r.f)}</div>
+                    <div style="font-size:0.75rem;color:#5d4037;">${r.n}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="test-tube-stand">
+              <div style="font-family:var(--typewriter);font-size:0.75rem;font-weight:bold;margin-bottom:4px;">Пробірка</div>
+              <div class="test-tube-rim"></div>
+              <div class="test-tube-glass">
+                <div id="tube-gas" class="tube-bubbles">
+                  <div class="bubble b1"></div>
+                  <div class="bubble b2"></div>
+                  <div class="bubble b3"></div>
+                  <div class="bubble b4"></div>
+                </div>
+                <div id="tube-liq" class="tube-liquid"></div>
+                <div id="tube-sed" class="tube-precipitate"></div>
+              </div>
+              <button onclick="testS1Mix()" class="action-btn" style="margin-top:8px;width:100%;padding:6px;font-size:0.78rem;">
+                <i class="fa-solid fa-flask"></i> ЗЛИТИ
+              </button>
+            </div>
+          </div>
+
+          <div id="s1-msg" class="feedback-box" style="display:none;"></div>
+        </div>
+      `;
+      s1Picked = [];
+    }
+
+    function selectS1Reagent(id) {
+      Sound.pour();
+      const pos = s1Picked.indexOf(id);
+      if (pos > -1) {
+        s1Picked.splice(pos, 1);
+      } else {
+        if (s1Picked.length >= 2) {
+          const removed = s1Picked.shift();
+          const oldCard = document.getElementById(`card-s1-${removed}`);
+          if (oldCard) oldCard.classList.remove('selected');
+        }
+        s1Picked.push(id);
+      }
+      const card = document.getElementById(`card-s1-${id}`);
+      if (card) card.classList.toggle('selected', s1Picked.includes(id));
+    }
+
+    function testS1Mix() {
+      if (s1Picked.length !== 2) {
+        showToast('Оберіть рівно два флакони на полиці!');
+        return;
+      }
+      const m = stage1Missions[currentS1Mission];
+      const pair = [...s1Picked].sort().join('+');
+      const box = document.getElementById('s1-msg');
+      const liq = document.getElementById('tube-liq');
+      const sed = document.getElementById('tube-sed');
+      const gas = document.getElementById('tube-gas');
+
+      box.style.display = 'block';
+
+      if (pair === m.target) {
+        Sound.success();
+        awardStars(1);
+        saveState();
+
+        if (m.effect === 'precipitate_white') {
+          liq.style.height = '60%';
+          sed.style.height = '28px';
+          sed.style.backgroundColor = '#ffffff';
+          sed.style.opacity = '1';
+          gas.classList.remove('active');
+        } else if (m.effect === 'gas') {
+          liq.style.height = '60%';
+          sed.style.height = '0px';
+          sed.style.opacity = '0';
+          gas.classList.add('active');
+        } else {
+          liq.style.height = '60%';
+          sed.style.height = '0px';
+          sed.style.opacity = '0';
+          gas.classList.remove('active');
+        }
+
+        box.className = 'feedback-box ok';
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <div>✅ ${formatChem(m.successMsg)}</div>
+            <button onclick="stepS1Next()" class="action-btn green" style="padding:6px 12px;font-size:0.8rem;">
+              ${currentS1Mission < 2 ? 'НАСТУПНА МІСІЯ' : 'ОТРИМАТИ ПОСВІДЧЕННЯ'} &rarr;
+            </button>
+          </div>
+        `;
+      } else {
+        Sound.error();
+        const charged = applyPenalty(10, 'mix' + pair, 'помилка · ' + (SHEET[gameState.stage] || ''));
+        saveState();
+        box.className = 'feedback-box err';
+        box.innerHTML = `❌ <strong>Невдала пара (${charged ? '-10 ХімКоїнів' : 'повторна спроба, без штрафу'}):</strong> Ця комбінація не дає очікуваного результату. ${({precipitate_white:'Шукайте пару, у якої катіон і аніон утворюють нерозчинну сіль (Н у таблиці).',gas:'Газ виділяється, коли кислота діє на карбонат (H₂CO₃ розкладається на CO₂ і H₂O).',neutral:'Шукайте кислоту й луг: H⁺ + OH⁻ → H₂O.'})[m.effect]}`;
+      }
+    }
+
+    function stepS1Next() {
+      if (currentS1Mission < 2) {
+        currentS1Mission++;
+        renderStage1(document.getElementById('app-container'));
+      } else {
+        showToast('Іспит успішно складено!');
+        advanceToStage(3);
+      }
+    }
+
+    // --- ЕТАП 3 (Бюджет реактивів) ---
+    const budgetPairs = [
+      {
+        q: '1. Що спостерігатиметься при зливанні розчинів BaCl₂ + Na₂SO₄?',
+        opts: [
+          { text: 'Випадання нерозчинного осаду', ok: true, why: 'Утворюється нерозчинний барій сульфат BaSO₄↓.' },
+          { text: 'Бурхливе виділення газу', ok: false },
+          { text: 'Видимих змін немає (реакція обміну не відбувається)', ok: false },
+          { text: 'Знебарвлення розчину без утворення осаду', ok: false }
+        ]
+      },
+      {
+        q: '2. Що спостерігатиметься при зливанні розчинів CuCl₂ + KNO₃?',
+        opts: [
+          { text: 'Видимих змін немає (реакція обміну не відбувається)', ok: true, why: 'Обидві потенційні солі — Cu(NO₃)₂ та KCl — добре розчинні у воді, йони вільно плавають у розчині.' },
+          { text: 'Випадання синього осаду', ok: false },
+          { text: 'Випадання білого кристалічного осаду', ok: false },
+          { text: 'Виділення газу з різким запахом', ok: false }
+        ]
+      },
+      {
+        q: '3. Що спостерігатиметься при додаванні розчину NaOH до розчину CuSO₄?',
+        opts: [
+          { text: 'Випадання драглистого блакитно-синього осаду', ok: true, why: 'Утворюється нерозчинний купрум(ІІ) гідроксид Cu(OH)₂↓.' },
+          { text: 'Бурхливе спінювання розчину з виділенням газу', ok: false },
+          { text: 'Видимих змін немає (реакція не відбувається)', ok: false },
+          { text: 'Випадання білого кристалічного осаду', ok: false }
+        ]
+      }
+    ];
+
+    let currentBudgetStep = 0;
+
+    function renderStage2(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      const step = budgetPairs[currentBudgetStep];
+      const opts = shuffleArray(step.opts);
+
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">АРКУШ 2 • БЮДЖЕТ РЕАКТИВІВ</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">Економія бюджету: теоретичний прогноз</h2>
+            <div class="stamp-badge">ПРОГНОЗ (${currentBudgetStep + 1}/3)</div>
+          </div>
+
+          <div class="story-block">
+            Реактиви лабораторії коштують дорого! Перед дослідом передбачте результат. За помилковий прогноз списується <strong>10 ХімКоїнів</strong>.
+          </div>
+
+          <div style="font-family:var(--typewriter);font-weight:bold;font-size:0.95rem;margin:10px 0;color:#3e2723;">
+            ${formatChem(step.q)}
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            ${opts.map((o, idx) => `
+              <div onclick="checkBudgetAnswer(${o.ok}, '${encodeURIComponent(o.why || '')}')" class="paper-card">
+                <span class="chem-eq">${formatChem(o.text)}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          <div id="b-feedback" class="feedback-box" style="display:none;"></div>
+        </div>
+      `;
+    }
+
+    function checkBudgetAnswer(ok, whyEncoded) {
+      const box = document.getElementById('b-feedback');
+      box.style.display = 'block';
+      if (ok) {
+        Sound.success();
+        awardStars(1);
+        saveState();
+        box.className = 'feedback-box ok';
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>✅ <strong>Точний прогноз!</strong> ${decodeURIComponent(whyEncoded)}</div>
+            <button onclick="stepBudgetNext()" class="action-btn green" style="padding:6px 12px;font-size:0.8rem;">ДАЛІ &rarr;</button>
+          </div>
+        `;
+      } else {
+        Sound.error();
+        const charged = applyPenalty(10, 'q', 'помилка · ' + (SHEET[gameState.stage] || ''));
+        saveState();
+        box.className = 'feedback-box err';
+        box.innerHTML = `❌ <strong>Хибний прогноз (${charged ? '-10 ХімКоїнів' : 'повторна спроба, без штрафу'})!</strong> Правильно: «${formatChem(budgetPairs[currentBudgetStep].opts.find(o => o.ok).text)}». ${formatChem(budgetPairs[currentBudgetStep].opts.find(o => o.ok).why || '')} Реакція йде лише якщо утворюється осад, газ або слабкий електроліт.`;
+      }
+    }
+
+    function stepBudgetNext() {
+      if (currentBudgetStep < 2) {
+        currentBudgetStep++;
+        renderStage2(document.getElementById('app-container'));
+      } else {
+        showToast('Бюджет розраховано!');
+        advanceToStage(4);
+      }
+    }
+
+    // --- ЕТАП 4 (Записка сторожа) ---
+    const guardNotes = [
+      {
+        suspect: 'Акумуляторний завод «Свинець-М»',
+        formula: 'Pb(NO₃)₂',
+        q: 'Оберіть правильне рівняння електролітичної дисоціації Pb(NO₃)₂:',
+        opts: [
+          { t: 'Pb(NO₃)₂ → Pb²⁺ + 2NO₃⁻', ok: true, ion: 'Pb²⁺' },
+          { t: 'Pb(NO₃)₂ → Pb²⁺ + NO₃²⁻', ok: false },
+          { t: 'Pb(NO₃)₂ → Pb⁺ + 2NO₃⁻', ok: false }
+        ]
+      },
+      {
+        suspect: 'Гальванічний цех «МідьПлюс»',
+        formula: 'CuSO₄',
+        q: 'Оберіть правильне рівняння електролітичної дисоціації CuSO₄:',
+        opts: [
+          { t: 'CuSO₄ → Cu²⁺ + SO₄²⁻', ok: true, ion: 'Cu²⁺' },
+          { t: 'CuSO₄ → Cu⁺ + SO₄⁻', ok: false },
+          { t: 'CuSO₄ → Cu²⁺ + 4SO²⁻', ok: false }
+        ]
+      },
+      {
+        suspect: 'Фарбувальна фабрика «Барвник»',
+        formula: 'BaCl₂',
+        q: 'Оберіть правильне рівняння електролітичної дисоціації BaCl₂:',
+        opts: [
+          { t: 'BaCl₂ → Ba²⁺ + 2Cl⁻', ok: true, ion: 'Ba²⁺' },
+          { t: 'BaCl₂ → Ba²⁺ + Cl₂²⁻', ok: false },
+          { t: 'BaCl₂ → Ba⁺ + 2Cl⁻', ok: false }
+        ]
+      }
+    ];
+
+    let currentGuardStep = 0;
+
+    function renderStage3(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      const item = guardNotes[currentGuardStep];
+      const opts = shuffleArray(item.opts);
+
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">АРКУШ 3 • ЗАПИСКА СТОРОЖА</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">Розшифровка солей: йонні «підписи»</h2>
+            <div class="stamp-badge">ПІДОЗРЮВАНИЙ (${currentGuardStep + 1}/3)</div>
+          </div>
+
+          <div class="story-block">
+            Сторож передав накладні хімікатів трьох заводів. Розпишіть кожну сіль на йони, щоб дізнатися специфічний катіон-«підпис» кожного підозрюваного!
+          </div>
+
+          <div style="background:#f4ebe0;padding:8px 12px;border:1px solid #d5c4a1;margin-bottom:10px;">
+            <strong>Підприємство:</strong> ${item.suspect}<br>
+            <strong>Сіль у стоках:</strong> <span class="chem-eq" style="color:var(--ink-blue);font-size:1.05rem;">${formatChem(item.formula)}</span>
+          </div>
+
+          <div style="font-family:var(--typewriter);font-weight:bold;margin-bottom:6px;">
+            ${formatChem(item.q)}
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            ${opts.map(o => `
+              <div onclick="checkGuardStep(${o.ok}, '${o.ion || ''}')" class="paper-card">
+                <span class="chem-eq">${formatChem(o.t)}</span>
+              </div>
+            `).join('')}
+          </div>
+
+          <div id="g-msg" class="feedback-box" style="display:none;"></div>
+        </div>
+      `;
+    }
+
+    function checkGuardStep(ok, ion) {
+      const box = document.getElementById('g-msg');
+      box.style.display = 'block';
+      if (ok) {
+        Sound.success();
+        awardStars(1);
+        saveState();
+        box.className = 'feedback-box ok';
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>✅ <strong>Вірно!</strong> Йон-підпис зафіксовано: <strong>${formatChem(ion)}</strong></div>
+            <button onclick="stepGuardNext()" class="action-btn green" style="padding:6px 12px;font-size:0.8rem;">ДАЛІ &rarr;</button>
+          </div>
+        `;
+      } else {
+        Sound.error();
+        const charged = applyPenalty(10, 'q', 'помилка · ' + (SHEET[gameState.stage] || ''));
+        saveState();
+        box.className = 'feedback-box err';
+        box.innerHTML = `❌ <strong>Помилка в рівнянні (${charged ? '-10 ХімКоїнів' : 'повторна спроба, без штрафу'})!</strong> Індекс біля йона стає коефіцієнтом, а заряд дорівнює валентності. Правильно: <strong>${guardNotes[currentGuardStep].opts.find(o => o.ok).t}</strong>`;
+      }
+    }
+
+    function stepGuardNext() {
+      if (currentGuardStep < 2) {
+        currentGuardStep++;
+        renderStage3(document.getElementById('app-container'));
+      } else {
+        gameState.evidence.suspectsUnlocked = true;
+        saveState();
+        showToast('Усі 3 йонні підписи встановлено!');
+        advanceToStage(5);
+      }
+    }
+
+    // --- ЕТАП 5 (Відбитки пальців) ---
+    const fingerprintCards = [
+      {
+        target: 'Cu²⁺ (МідьПлюс)',
+        colorName: 'яскраво-синій драглистий осад Cu(OH)₂↓',
+        tubeColor: '#0288d1',
+        opts: [
+          { t: 'Cu²⁺ + 2OH⁻ → Cu(OH)₂↓', ok: true },
+          { t: 'Cu²⁺ + OH⁻ → CuOH↓', ok: false },
+          { t: 'Cu²⁺ + 2OH⁻ → Cu(OH)₂ (розчинний)', ok: false }
+        ]
+      },
+      {
+        target: 'Pb²⁺ (Свинець-М)',
+        colorName: 'золотисто-жовтий кристалічний осад PbI₂↓',
+        tubeColor: '#ffd600',
+        opts: [
+          { t: 'Pb²⁺ + 2I⁻ → PbI₂↓', ok: true },
+          { t: 'Pb²⁺ + I⁻ → PbI↓', ok: false },
+          { t: 'Pb²⁺ + 2I⁻ → Pb + I₂↓', ok: false }
+        ]
+      },
+      {
+        target: 'Ba²⁺ (Барвник)',
+        colorName: 'важкий білий кристалічний осад BaSO₄↓',
+        tubeColor: '#ffffff',
+        opts: [
+          { t: 'Ba²⁺ + SO₄²⁻ → BaSO₄↓', ok: true },
+          { t: 'Ba²⁺ + SO₄²⁻ → BaSO₄ (розчинний)', ok: false },
+          { t: 'Ba⁺ + SO₄⁻ → BaSO₄↓', ok: false }
+        ]
+      }
+    ];
+
+    let currentFingerprintStep = 0;
+
+    const fpData = [
+      { target: 'Cu²⁺ (МідьПлюс)', colorName: 'яскраво-синій драглистий осад Cu(OH)₂↓', tubeColor: '#0288d1',
+        mol: { ok: 'CuSO₄ + 2NaOH → Cu(OH)₂↓ + Na₂SO₄', bad: ['CuSO₄ + NaOH → Cu(OH)₂↓ + Na₂SO₄', 'CuSO₄ + 2NaOH → CuOH↓ + NaSO₄'] },
+        full: { ok: 'Cu²⁺ + SO₄²⁻ + 2Na⁺ + 2OH⁻ → Cu(OH)₂↓ + 2Na⁺ + SO₄²⁻', bad: ['Cu²⁺ + SO₄²⁻ + 2Na⁺ + 2OH⁻ → Cu²⁺ + 2OH⁻ + 2Na⁺ + SO₄²⁻', 'CuSO₄ + 2Na⁺ + 2OH⁻ → Cu(OH)₂↓ + 2Na⁺ + SO₄²⁻'] },
+        ions: ['Cu²⁺', 'SO₄²⁻', 'Na⁺', 'OH⁻'], spect: ['SO₄²⁻', 'Na⁺'],
+        short: { ok: 'Cu²⁺ + 2OH⁻ → Cu(OH)₂↓', bad: ['Cu²⁺ + OH⁻ → CuOH↓', 'Cu²⁺ + 2OH⁻ → Cu(OH)₂ (розчинний)'] } },
+      { target: 'Pb²⁺ (Свинець-М)', colorName: 'золотисто-жовтий осад PbI₂↓', tubeColor: '#ffd600',
+        mol: { ok: 'Pb(NO₃)₂ + 2KI → PbI₂↓ + 2KNO₃', bad: ['Pb(NO₃)₂ + KI → PbI₂↓ + KNO₃', 'Pb(NO₃)₂ + 2KI → PbI₂↓ + KNO₃'] },
+        full: { ok: 'Pb²⁺ + 2NO₃⁻ + 2K⁺ + 2I⁻ → PbI₂↓ + 2K⁺ + 2NO₃⁻', bad: ['Pb²⁺ + 2NO₃⁻ + 2K⁺ + 2I⁻ → Pb²⁺ + 2I⁻ + 2K⁺ + 2NO₃⁻', 'Pb²⁺ + NO₃⁻ + K⁺ + I⁻ → PbI₂↓ + K⁺ + NO₃⁻'] },
+        ions: ['Pb²⁺', 'NO₃⁻', 'K⁺', 'I⁻'], spect: ['NO₃⁻', 'K⁺'],
+        short: { ok: 'Pb²⁺ + 2I⁻ → PbI₂↓', bad: ['Pb²⁺ + I⁻ → PbI↓', 'Pb²⁺ + 2I⁻ → Pb + I₂↓'] } },
+      { target: 'Ba²⁺ (Барвник)', colorName: 'важкий білий осад BaSO₄↓', tubeColor: '#ffffff',
+        mol: { ok: 'BaCl₂ + Na₂SO₄ → BaSO₄↓ + 2NaCl', bad: ['BaCl₂ + Na₂SO₄ → BaSO₄↓ + NaCl', 'BaCl₂ + Na₂SO₄ → BaSO₄ + 2NaCl'] },
+        full: { ok: 'Ba²⁺ + 2Cl⁻ + 2Na⁺ + SO₄²⁻ → BaSO₄↓ + 2Na⁺ + 2Cl⁻', bad: ['Ba²⁺ + 2Cl⁻ + 2Na⁺ + SO₄²⁻ → Ba²⁺ + SO₄²⁻ + 2Na⁺ + 2Cl⁻', 'Ba²⁺ + Cl⁻ + Na⁺ + SO₄²⁻ → BaSO₄↓ + Na⁺ + Cl⁻'] },
+        ions: ['Ba²⁺', 'Cl⁻', 'Na⁺', 'SO₄²⁻'], spect: ['Cl⁻', 'Na⁺'],
+        short: { ok: 'Ba²⁺ + SO₄²⁻ → BaSO₄↓', bad: ['Ba⁺ + SO₄⁻ → BaSO₄↓', 'Ba²⁺ + SO₄²⁻ → BaSO₄ (розчинний)'] } }
+    ];
+    let fpSub = 0, fpSel = [];
+    const FP_STEPS = ['молекулярне рівняння', 'повне йонне рівняння', 'йони-глядачі', 'скорочене йонне рівняння'];
+    const FP_RULE = [
+      'Молекулярне рівняння: формули речовин цілком, коефіцієнти зрівнюють атоми кожного елемента.',
+      'Повне йонне: розчинні сильні електроліти записуємо йонами, а осад ↓ (газ, воду) залишаємо молекулою.',
+      'Йони-глядачі — це йони, однакові в обох частинах повного рівняння. Вони не утворюють осаду й не беруть участі в реакції.',
+      'Скорочене: викреслюємо йони-глядачі й залишаємо лише те, що реально реагує.'
+    ];
+
+    function renderStage4(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      const item = fpData[currentFingerprintStep];
+      const keys = ['mol', 'full', null, 'short'];
+      const done = [];
+      if (fpSub > 0) done.push('Молекулярне: ' + item.mol.ok);
+      if (fpSub > 1) done.push('Повне йонне: ' + item.full.ok);
+      if (fpSub > 2) done.push('Йони-глядачі: ' + item.spect.join(', '));
+      let body = '';
+      if (fpSub === 2) {
+        fpSel = [];
+        body = `<div style="font-family:var(--typewriter);font-weight:bold;margin:6px 0;">Позначте ЙОНИ-ГЛЯДАЧІ (їх потім викреслять):</div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px;">${item.ions.map((ion, i) => `<div id="fp-ion-${i}" onclick="toggleFpIon(${i})" class="paper-card" style="padding:14px 22px;font-size:1.2rem;"><span class="chem-eq">${ion}</span></div>`).join('')}</div>
+          <button onclick="checkFpSpect()" class="action-btn green">ПЕРЕВІРИТИ</button>`;
+      } else {
+        const k = keys[fpSub];
+        const opts = shuffleArray([{ t: item[k].ok, ok: true }, ...item[k].bad.map(t => ({ t, ok: false }))]);
+        body = `<div style="display:flex;flex-direction:column;gap:10px;">${opts.map(o => `<div onclick="checkFingerprintStep(${o.ok})" class="paper-card" style="padding:16px 20px;font-size:1.1rem;"><span class="chem-eq">${o.t}</span></div>`).join('')}</div>`;
+      }
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">АРКУШ 4 • ВІДБИТКИ ПАЛЬЦІВ</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">Протокол реакції: ${FP_STEPS[fpSub]}</h2>
+            <div class="stamp-badge">ЕТАЛОН ${currentFingerprintStep + 1}/3 · КРОК ${fpSub + 1}/4</div>
+          </div>
+          <div class="story-block">Катіон: <strong>${item.target}</strong>, ознака: ${item.colorName}.<br><em>${FP_RULE[fpSub]}</em></div>
+          <div style="display:grid;grid-template-columns:180px 1fr;gap:20px;align-items:center;background:#f3ebe0;border:1px solid #d5c4a1;padding:16px 20px;border-radius:4px;margin-bottom:16px;">
+            <div class="test-tube-stand" style="background:#e0d2b9;padding:12px;">
+              <div style="font-family:var(--typewriter);font-size:0.8rem;font-weight:bold;margin-bottom:4px;color:#3e2723;">Зразок осаду</div>
+              <div class="test-tube-rim"></div>
+              <div class="test-tube-glass" style="height:110px;">
+                <div class="tube-liquid" style="height:65%;"></div>
+                <div class="tube-precipitate" style="height:32px;background:${item.tubeColor};opacity:1;"></div>
+              </div>
+            </div>
+            <div style="font-family:var(--typewriter);font-size:0.95rem;line-height:1.7;color:#3e2723;">
+              <strong>Протокол:</strong><br>${done.length ? done.map(d => '✔ ' + d).join('<br>') : 'Поки порожній. Складайте його крок за кроком.'}
+            </div>
+          </div>
+          ${body}
+          <div id="fp-msg" class="feedback-box" style="display:none;"></div>
+        </div>
+      `;
+    }
+
+    function toggleFpIon(i) {
+      const el = document.getElementById('fp-ion-' + i);
+      const p = fpSel.indexOf(i);
+      if (p > -1) { fpSel.splice(p, 1); el.classList.remove('selected'); } else { fpSel.push(i); el.classList.add('selected'); }
+    }
+
+    function checkFpSpect() {
+      const item = fpData[currentFingerprintStep];
+      const chosen = fpSel.map(i => item.ions[i]).sort().join('|');
+      checkFingerprintStep(chosen === [...item.spect].sort().join('|'));
+    }
+
+    function checkFingerprintStep(ok) {
+      const box = document.getElementById('fp-msg');
+      box.style.display = 'block';
+      if (ok) {
+        Sound.success();
+        if (fpSub === 3) awardStars(1);
+        saveState();
+        box.className = 'feedback-box ok';
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>✅ <strong>Вірно!</strong> ${FP_RULE[fpSub]}</div>
+            <button onclick="stepFingerprintNext()" class="action-btn green" style="padding:6px 12px;font-size:0.8rem;">ДАЛІ &rarr;</button>
+          </div>`;
+      } else {
+        Sound.error();
+        const charged = applyPenalty(10, 'q', 'помилка · Відбитки пальців');
+        saveState();
+        box.className = 'feedback-box err';
+        box.innerHTML = `❌ <strong>Помилка (${charged ? '-10 ХімКоїнів' : 'повторна спроба, без штрафу'})!</strong> ${FP_RULE[fpSub]} ${fpSub === 2 ? 'Правильно: ' + fpData[currentFingerprintStep].spect.join(', ') + '.' : ''}`;
+      }
+    }
+
+    function stepFingerprintNext() {
+      const c = document.getElementById('app-container');
+      if (fpSub < 3) { fpSub++; renderStage4(c); return; }
+      fpSub = 0;
+      if (currentFingerprintStep < 2) {
+        currentFingerprintStep++;
+        renderStage4(c);
+      } else {
+        gameState.evidence.fingerprintsUnlocked = true;
+        saveState();
+        showToast('Усі 3 відбитки в картотеці!');
+        advanceToStage(6);
+      }
+    }
+
+    // --- ЕТАП 6 (Судовий батл проти адвоката) ---
+    const lawyerTricks = [
+      {
+        statement: 'Адвокат заявляє: «У повному йонному рівнянні осад плюмбум(ІІ) йодиду розпадається на вільні йони в розчині» і подає формулу:',
+        tokens: [
+          { text: 'Pb²⁺ + 2I⁻', isFake: false },
+          { text: '→', isFake: false },
+          { text: 'Pb²⁺ + 2I⁻', isFake: true, why: 'Осад плюмбум(ІІ) йодиду нерозчинний і не розпадається на йони! Його слід записувати у вигляді недисоційованої речовини зі стрілкою вниз: PbI₂↓.' }
+        ]
+      },
+      {
+        statement: 'Адвокат стверджує: «Заряд катіона Барію дорівнює 1+, тому наше підприємство не має відношення до барій сульфату» і показує формулу:',
+        tokens: [
+          { text: 'Ba⁺', isFake: true, why: 'Барій — елемент головної підгрупи II групи, його ступінь окиснення завжди +2, а катіон має заряд тільки Ba²⁺!' },
+          { text: '+ SO₄²⁻', isFake: false },
+          { text: '→ BaSO₄↓', isFake: false }
+        ]
+      },
+      {
+        statement: 'Адвокат доводить: «Катіон міді не осаджується лугом, бо купрум(ІІ) гідроксид добре розчиняється у воді» і подає рівняння:',
+        tokens: [
+          { text: 'Cu²⁺ + 2OH⁻', isFake: false },
+          { text: '→', isFake: false },
+          { text: 'Cu(OH)₂ (р)', isFake: true, why: 'Купрум(ІІ) гідроксид нерозчинний у воді (Н) і миттєво випадає синім драглистим осадом: Cu(OH)₂↓!' }
+        ]
+      }
+    ];
+
+    let currentLawyerStep = 0;
+
+    function renderStage5(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      const trick = lawyerTricks[currentLawyerStep];
+      const tokens = trick.tokens;
+
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">АРКУШ 5 • СУДОВИЙ БАТЛ</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">«Протестую!»: розбийте фальсифікацію адвоката</h2>
+            <div class="stamp-badge">ДЕБАТИ (${currentLawyerStep + 1}/3)</div>
+          </div>
+
+          <div class="story-block" style="font-size:1.05rem;line-height:1.6;">
+            Підступний адвокат заводу намагається збити слідство з пантелику хибними хімічними записами в офіційній судово-хімічній експертизі. Уважно прочитайте рівняння зліва направо і <strong>клікніть по сфальсифікованому фрагменту</strong>, щоб висловити офіційний протест судді!
+          </div>
+
+          <div style="background:#ffffff;border:2px solid #8d6e63;box-shadow:inset 0 0 10px rgba(0,0,0,0.05);padding:20px 24px;border-radius:4px;margin:16px 0;position:relative;">
+            <div style="position:absolute;top:10px;right:15px;color:#c62828;font-family:var(--typewriter);font-weight:bold;font-size:0.85rem;border:2px solid #c62828;padding:2px 8px;transform:rotate(4deg);opacity:0.85;">
+              ЕКСПЕРТИЗА ЗАХИСТУ
+            </div>
+            <div style="font-family:var(--typewriter);font-size:1.1rem;color:#212121;line-height:1.6;margin-bottom:14px;">
+              ⚖️ ${formatChem(trick.statement)}
+            </div>
+
+            <div class="court-equation-row" style="margin:16px 0 6px 0;">
+              ${tokens.map(t => `
+                <button onclick="handleLawyerObject(${t.isFake}, '${encodeURIComponent(t.why || '')}')" class="court-eq-token" style="padding:14px 22px;font-size:1.3rem;">
+                  ${formatChem(t.text)}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div id="law-msg" class="feedback-box" style="display:none;"></div>
+        </div>
+      `;
+    }
+
+    function handleLawyerObject(isFake, whyEncoded) {
+      const box = document.getElementById('law-msg');
+      box.style.display = 'block';
+      if (isFake) {
+        Sound.success();
+        awardStars(2);
+        saveState();
+        box.className = 'feedback-box ok';
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>⚖️ <strong>ПРОТЕСТ ПРИЙНЯТО СУДДЕЮ!</strong> ${decodeURIComponent(whyEncoded)}</div>
+            <button onclick="stepLawyerNext()" class="action-btn green" style="padding:6px 12px;font-size:0.8rem;">ДАЛІ &rarr;</button>
+          </div>
+        `;
+      } else {
+        Sound.error();
+        const charged = applyPenalty(10, 'q', 'помилка · ' + (SHEET[gameState.stage] || ''));
+        saveState();
+        box.className = 'feedback-box err';
+        box.innerHTML = `❌ <strong>Протест відхилено (${charged ? '-10 ХімКоїнів' : 'повторна спроба, без штрафу'})!</strong> Цей фрагмент записано хімічно правильно. Знайдіть саме сфальсифіковану частину! Підказка: перевірте заряди йонів і те, чи не розписано осад на йони.`;
+      }
+    }
+
+    function stepLawyerNext() {
+      if (currentLawyerStep < 2) {
+        currentLawyerStep++;
+        renderStage5(document.getElementById('app-container'));
+      } else {
+        showToast('Адвоката знешкоджено!');
+        advanceToStage(7);
+      }
+    }
+
+    // --- ЕТАП 7 (Набір детектива) ---
+    const warehouseShelf = [
+      { id: 'NaOH', f: 'NaOH', n: 'Натрій гідроксид', mark: 'Луг, водний розчин 0.5 М' },
+      { id: 'KI', f: 'KI', n: 'Калій йодид', mark: 'Сіль, водний розчин 0.5 М' },
+      { id: 'Na2SO4', f: 'Na₂SO₄', n: 'Натрій сульфат', mark: 'Сіль, водний розчин 0.5 М' },
+      { id: 'NaCl', f: 'NaCl', n: 'Натрій хлорид', mark: 'Сіль, водний розчин 0.5 М' },
+      { id: 'KNO3', f: 'KNO₃', n: 'Калій нітрат', mark: 'Сіль, водний розчин 0.5 М' },
+      { id: 'HNO3', f: 'HNO₃', n: 'Нітратна кислота', mark: 'Кислота, водний розчин 0.5 М' }
+    ];
+
+    let kitPicked = [];
+
+    function renderStage6(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      const shelf = shuffleArray(warehouseShelf);
+
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">АРКУШ 6 • НАБІР ДЕТЕКТИВА</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">Комплектування польової валізи детектора</h2>
+            <div class="stamp-badge">ВАЛІЗА (0/3)</div>
+          </div>
+
+          <div class="story-block">
+            Перед виїздом на берег річки Йонки відберіть зі складу лабораторії <strong>рівно ТРИ розчинні реагенти</strong>, за допомогою яких можна надійно виявити всі три підозрювані катіони з нашої картотеки: <strong>Cu²⁺</strong> (синій осад), <strong>Pb²⁺</strong> (жовтий осад) та <strong>Ba²⁺</strong> (білий осад).
+          </div>
+
+          <div class="paper-grid">
+            ${shelf.map(r => `
+              <div onclick="selectKitBottle('${r.id}')" id="kit-card-${r.id}" class="paper-card">
+                <div class="check-mark">✓</div>
+                <div class="chem-eq" style="font-size:1.05rem;color:var(--ink-blue);">${formatChem(r.f)}</div>
+                <div style="font-weight:bold;font-size:0.8rem;color:#3e2723;">${r.n}</div>
+                <div style="font-size:0.72rem;color:#795548;margin-top:2px;">${r.mark}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;">
+            <button onclick="confirmKitPack()" class="action-btn red">
+              <i class="fa-solid fa-suitcase"></i> ЗАТВЕРДИТИ ВАЛІЗУ ТА ВИЇХАТИ НА РІЧКУ
+            </button>
+          </div>
+
+          <div id="kit-msg" class="feedback-box" style="display:none;"></div>
+        </div>
+      `;
+      kitPicked = [];
+    }
+
+    function selectKitBottle(id) {
+      Sound.pour();
+      const pos = kitPicked.indexOf(id);
+      if (pos > -1) {
+        kitPicked.splice(pos, 1);
+      } else {
+        if (kitPicked.length >= 3) {
+          const removed = kitPicked.shift();
+          const oldCard = document.getElementById(`kit-card-${removed}`);
+          if (oldCard) oldCard.classList.remove('selected');
+        }
+        kitPicked.push(id);
+      }
+      const card = document.getElementById(`kit-card-${id}`);
+      if (card) card.classList.toggle('selected', kitPicked.includes(id));
+    }
+
+    function confirmKitPack() {
+      if (kitPicked.length !== 3) {
+        showToast('Оберіть рівно три флакони у валізу!');
+        return;
+      }
+      const box = document.getElementById('kit-msg');
+      box.style.display = 'block';
+
+      const sorted = [...kitPicked].sort().join('+');
+      const target = ['KI', 'Na2SO4', 'NaOH'].sort().join('+');
+
+      if (sorted === target) {
+        Sound.success();
+        awardStars(3);
+        gameState.evidence.kitUnlocked = true;
+        saveState();
+        box.className = 'feedback-box ok';
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>🧰 <strong>Ідеальний набір!</strong> NaOH виявить мідь, KI — свинець, а Na₂SO₄ — барій.</div>
+            <button onclick="advanceToStage(8)" class="action-btn green" style="padding:6px 12px;font-size:0.8rem;">
+              ДО КОЛЕКТОРА РІЧКИ &rarr;
+            </button>
+          </div>
+        `;
+      } else {
+        Sound.error();
+        const charged = applyPenalty(10, 'q', 'помилка · ' + (SHEET[gameState.stage] || ''));
+        saveState();
+        box.className = 'feedback-box err';
+        box.innerHTML = `❌ <strong>Невдалий набір (${charged ? '-10 ХімКоїнів' : 'повторна спроба, без штрафу'})!</strong> Серед обраних є флакони, що не дають характерних осадів для нашої трійки катіонів (Cu²⁺, Pb²⁺, Ba²⁺). Перевірте таблицю розчинності!`;
+      }
+    }
+
+    // --- ЕТАП 8 (Ключова проба — Річка та 3 Труби) ---
+    function renderStage7(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      const pipes = [
+        { id: 'river', title: '🌊 Проба з р. Йонка', desc: 'Вода з місця загибелі риби' },
+        { id: 'pipeA', title: '🚰 Труба «А»', desc: 'Стік колектора № 1' },
+        { id: 'pipeB', title: '🚰 Труба «Б»', desc: 'Стік колектора № 2' },
+        { id: 'pipeC', title: '🚰 Труба «В»', desc: 'Стік колектора № 3' }
+      ];
+
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">АРКУШ 7 • КЛЮЧОВА ПРОБА</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">Польова експертиза: річкова вода та три труби</h2>
+            <div class="stamp-badge">ДОСЛІДІВ: <span id="test-counter">${gameState.evidence.pipeTestCount}</span></div>
+          </div>
+
+          <div class="story-block" style="font-size:1.05rem;line-height:1.6;">
+            Перед вами контрольна проба води з річки Йонки та проби з трьох колекторних труб підприємств без маркування (А, Б, В). Кожен дослід коштує <strong>3 ХімКоїни</strong>. Додавайте реактиви з валізи (<strong>NaOH, KI, Na₂SO₄</strong>) до кожної пробірки. Порівняйте аналітичні ознаки й знайдіть трубу, стоки якої повністю збігаються зі слідом у річці!
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:16px;">
+            ${pipes.map(p => `
+              <div class="test-tube-stand">
+                <div style="font-family:var(--typewriter);font-weight:bold;font-size:0.92rem;color:#3e2723;text-align:center;">
+                  ${p.title}<br><small style="color:#795548;font-size:0.75rem;">${p.desc}</small>
+                </div>
+                <div class="test-tube-rim" style="margin-top:8px;"></div>
+                <div class="test-tube-glass">
+                  <div id="liq-${p.id}" class="tube-liquid" style="height:55%;background:${p.id === 'river' ? 'rgba(3,169,244,0.25)' : 'rgba(176,190,197,0.3)'};"></div>
+                  <div id="sed-${p.id}" class="tube-precipitate"></div>
+                </div>
+                <div id="res-${p.id}" style="font-family:var(--typewriter);font-size:0.8rem;text-align:center;min-height:36px;margin:8px 0;color:#3e2723;">
+                  Реагент не додано
+                </div>
+                <div style="display:flex;gap:4px;width:100%;">
+                  <button onclick="handlePipeTest('${p.id}', 'NaOH')" class="desk-btn" style="flex:1;padding:6px 0;font-size:0.75rem;">+NaOH</button>
+                  <button onclick="handlePipeTest('${p.id}', 'KI')" class="desk-btn" style="flex:1;padding:6px 0;font-size:0.75rem;">+KI</button>
+                  <button onclick="handlePipeTest('${p.id}', 'Na2SO4')" class="desk-btn" style="flex:1;padding:6px 0;font-size:0.75rem;">+Na₂SO₄</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="background:#f4ebe0;border:2px solid #8d6e63;padding:14px;border-radius:4px;">
+            <label style="font-family:var(--typewriter);font-weight:bold;font-size:0.95rem;display:block;margin-bottom:8px;">
+              ОФІЦІЙНИЙ ВИСНОВОК: Яка саме труба скинула смертоносну отруту в річку Йонку?
+            </label>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <select id="accuse-select" class="paper-select" style="flex:1;min-width:200px;">
+                <option value="">-- Оберіть винну трубу за збігом осадів --</option>
+                <option value="pipeA">Труба скиду «А»</option>
+                <option value="pipeB">Труба скиду «Б»</option>
+                <option value="pipeC">Труба скиду «В»</option>
+              </select>
+              <button onclick="submitPipeAccusation()" class="action-btn red">
+                <i class="fa-solid fa-handcuffs"></i> ОГОЛОСИТИ ПІДОЗРУ
+              </button>
+            </div>
+          </div>
+
+          <div id="pipe-msg" class="feedback-box" style="display:none;"></div>
+        </div>
+      `;
+    }
+
+    function handlePipeTest(target, reagent) {
+      Sound.pour();
+      gameState.evidence.tested = gameState.evidence.tested || {};
+      const tkey = target + ':' + reagent;
+      let costNote = ' (повторний дослід, безкоштовно)';
+      if (!gameState.evidence.tested[tkey]) {
+        gameState.evidence.tested[tkey] = true;
+        gameState.evidence.pipeTestCount++;
+        applyPenalty(3, 'test' + tkey, 'дослід з ' + reagent, false);
+        costNote = ' (−3 ХімКоїни)';
+      }
+      saveState();
+      const counter = document.getElementById('test-counter');
+      if (counter) counter.textContent = gameState.evidence.pipeTestCount;
+
+      const sed = document.getElementById(`sed-${target}`);
+      const liq = document.getElementById(`liq-${target}`);
+      const res = document.getElementById(`res-${target}`);
+
+      liq.style.height = '68%';
+
+      let hasPpt = false;
+      let color = '#fff';
+      let text = 'Осаду немає, розчин прозорий';
+
+      if (target === 'river') {
+        // У річці є Pb²⁺: поводиться як свинцевий стік
+        if (reagent === 'KI') {
+          hasPpt = true;
+          color = '#ffd600';
+          text = '💛 На дні випав яскравий ЗОЛОТИСТО-ЖОВТИЙ кристалічний осад!';
+        } else if (reagent === 'NaOH') {
+          hasPpt = true;
+          color = '#ffffff';
+          text = '🤍 Випав БІЛИЙ осад. Синього осаду немає, отже мідь виключаємо.';
+        } else if (reagent === 'Na2SO4') {
+          hasPpt = true;
+          color = '#ffffff';
+          text = '🤍 Випав білий осад. Але такий осад дає і свинець, і барій: потрібен інший реагент!';
+        }
+      } else {
+        const substance = gameState.pipeMapping[target];
+
+        if (substance === 'lead') {
+          if (reagent === 'KI') {
+            hasPpt = true;
+            color = '#ffd600';
+            text = '💛 На дні випав яскравий ЗОЛОТИСТО-ЖОВТИЙ осад (повний збіг із річкою!)';
+          } else if (reagent === 'NaOH') {
+            hasPpt = true;
+            color = '#ffffff';
+            text = '🤍 На дні випав білий осад (синього осаду немає)';
+          } else if (reagent === 'Na2SO4') {
+            hasPpt = true;
+            color = '#ffffff';
+            text = '🤍 На дні випав білий осад сульфату';
+          }
+        } else if (substance === 'copper') {
+          if (reagent === 'NaOH') {
+            hasPpt = true;
+            color = '#0288d1';
+            text = '💙 На дні випав драглистий ЯСКРАВО-СИНІЙ осад гідроксиду міді!';
+          } else if (reagent === 'KI') {
+            hasPpt = true;
+            color = '#6d4c41';
+            text = '🤎 На дні випав бурий осад з виділенням йоду';
+          } else {
+            hasPpt = false;
+            text = 'Осаду немає, прозорий блакитний розчин';
+          }
+        } else if (substance === 'dye') {
+          if (reagent === 'Na2SO4') {
+            hasPpt = true;
+            color = '#ffffff';
+            text = '🤍 На дні випав важкий білий осад сульфату барію!';
+          } else {
+            hasPpt = false;
+            text = 'Осаду немає, розчин прозорий';
+          }
+        }
+      }
+
+      if (hasPpt) {
+        sed.style.height = '30px';
+        sed.style.backgroundColor = color;
+        sed.style.opacity = '1';
+      } else {
+        sed.style.height = '0px';
+        sed.style.opacity = '0';
+      }
+
+      res.innerHTML = `<strong>+${reagent}:</strong> ${text} <small style="color:#8d6e63;">${costNote}</small>`;
+    }
+
+    function submitPipeAccusation() {
+      const choice = document.getElementById('accuse-select').value;
+      const box = document.getElementById('pipe-msg');
+      box.style.display = 'block';
+
+      if (!choice) {
+        showToast('Оберіть трубу для оголошення підозри!');
+        return;
+      }
+
+      if (choice === gameState.evidence.culpritPipe) {
+        Sound.success();
+        awardStars(3);
+        gameState.evidence.pipeUnlocked = true;
+        saveState();
+        box.className = 'feedback-box ok';
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>🎉 <strong>ВИКРИТТЯ ЗАВЕРШЕНО!</strong> Проби цієї труби та річки дали однаковий золотистий осад з KI. Винен акумуляторний завод «Свинець-М»!</div>
+            <button onclick="advanceToStage(9)" class="action-btn green" style="padding:6px 12px;font-size:0.8rem;">ДО ОЧИЩЕННЯ &rarr;</button>
+          </div>
+        `;
+      } else {
+        Sound.error();
+        const charged = applyPenalty(15, 'acc' + choice, 'помилка · ' + (SHEET[gameState.stage] || ''));
+        saveState();
+        box.className = 'feedback-box err';
+        box.innerHTML = `❌ <strong>Помилкове звинувачення (${charged ? '-15 ХімКоїнів' : 'повторна спроба, без штрафу'})!</strong> Йонний підпис цієї труби не збігається з пробою річки. Перевірте осади ще раз!`;
+      }
+    }
+
+    // --- ЕТАП 9 (Очищення річки) ---
+    const cleaningOptions = [
+      {
+        id: 'Na2SO4',
+        name: 'Натрій сульфат (Na₂SO₄)',
+        desc: 'Зв\'язує токсичні катіони Pb²⁺ у нерозчинний осад PbSO₄↓ на мулових фільтрах, не змінюючи кислотність води.',
+        ok: true
+      },
+      {
+        id: 'H2SO4',
+        name: 'Концентрована сульфатна кислота (H₂SO₄)',
+        desc: 'Небезпечно! Окиснює водойму, утворює кислотну отруту та доб\'є залишки флори і фауни.',
+        ok: false
+      },
+      {
+        id: 'KOH',
+        name: 'Калій гідроксид (KOH)',
+        desc: 'Небезпечно! Створює різке лужне середовище (високий pH), смертельне для риб.',
+        ok: false
+      }
+    ];
+
+    function renderStage8(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      const opts = shuffleArray(cleaningOptions);
+
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">АРКУШ 8 • ЕКОЛОГІЧНЕ ОЧИЩЕННЯ</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">Нейтралізація отрути: чиста річка Йонка</h2>
+            <div class="stamp-badge green">ФІНАЛ</div>
+          </div>
+
+          <div class="story-block">
+            Суд зобов'язав завод «Свинець-М» оплатити екстрену нейтралізацію стоків. Оберіть екологічно безпечний реагент, який зв'яже іони <strong>Pb²⁺</strong> у нерозчинний осад, не додавши у воду нових токсинів і не порушивши природний pH річки!
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            ${opts.map(o => `
+              <div onclick="handleCleanChoice(${o.ok})" class="paper-card">
+                <div class="chem-eq" style="font-size:1rem;color:var(--ink-blue);">${formatChem(o.name)}</div>
+                <div style="font-size:0.78rem;color:#3e2723;margin-top:2px;">${o.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div id="clean-msg" class="feedback-box" style="display:none;"></div>
+        </div>
+      `;
+    }
+
+    function handleCleanChoice(ok) {
+      const box = document.getElementById('clean-msg');
+      box.style.display = 'block';
+      if (ok) {
+        Sound.success();
+        awardStars(3);
+        saveState();
+        box.className = 'feedback-box ok';
+        box.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>🌊 <strong>РІЧКУ ЙОНКУ ВРЯТОВАНО!</strong> Свинець зв\'язано в нерозчинний осад PbSO₄↓, екосистема очищена!</div>
+            <button onclick="advanceToStage(10)" class="action-btn green" style="padding:6px 12px;font-size:0.8rem;">СКЛАСТИ ВИРОК СУДУ &rarr;</button>
+          </div>
+        `;
+      } else {
+        Sound.error();
+        const charged = applyPenalty(10, 'q', 'помилка · ' + (SHEET[gameState.stage] || ''));
+        saveState();
+        box.className = 'feedback-box err';
+        box.innerHTML = `❌ <strong>Екологічна катастрофа (${charged ? '-10 ХімКоїнів' : 'повторна спроба, без штрафу'})!</strong> Цей реагент зробить воду небезпечною для живих організмів. Оберіть безпечну розчинну сіль!`;
+      }
+    }
+
+    // --- ЕТАП 10 (Судовий вирок) ---
+    function renderStageCourt(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      container.innerHTML = `
+        <div class="dossier-folder">
+          <div class="folder-tab">АРКУШ 9 • СУДОВИЙ ВИРОК</div>
+          <div class="folder-header-row">
+            <h2 class="dossier-h2">Офіційний обвинувальний акт експертизи</h2>
+            <div class="stamp-badge">СУД МІСТА</div>
+          </div>
+
+          <div class="story-block">
+            Слідчий-експерт <strong>${gameState.detectiveName || 'Курсант'}</strong> зачитує висновок у суді. Заповніть пункти протоколу згідно з зібраними доказами:
+          </div>
+
+          <form onsubmit="handleCourtVerdict(event)">
+            <div class="form-field">
+              <label>1. Чим пояснюється синюватий колір води в річці?</label>
+              <select id="v1" class="paper-select" required>
+                <option value="">-- Оберіть відповідь --</option>
+                <option value="safe_dye">Безпечним барвником/маскуванням фабрики, бо проба з лугом не дала синього осаду Cu(OH)₂</option>
+                <option value="copper_poison">Високою концентрацією міді</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>2. Який реагент виявив справжню отруту в пробі води?</label>
+              <select id="v2" class="paper-select" required>
+                <option value="">-- Оберіть відповідь --</option>
+                <option value="KI">Калій йодид (KI), який дав характерний золотисто-жовтий осад</option>
+                <option value="NaCl">Кухонна сіль</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>3. Яке скорочене йонне рівняння стало «відбитком пальця» отрути?</label>
+              <select id="v3" class="paper-select" required>
+                <option value="">-- Оберіть відповідь --</option>
+                <option value="PbI2">Pb²⁺ + 2I⁻ → PbI₂↓ (золотистий осад)</option>
+                <option value="BaSO4">Ba²⁺ + SO₄²⁻ → BaSO₄↓</option>
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label>4. Яке підприємство визнано винним у забрудненні річки Йонки?</label>
+              <select id="v4" class="paper-select" required>
+                <option value="">-- Оберіть підприємство --</option>
+                <option value="lead_factory">Акумуляторний завод «Свинець-М» (скид солі Pb(NO₃)₂)</option>
+                <option value="copper_factory">Гальванічний цех «МідьПлюс»</option>
+                <option value="dye_factory">Фарбувальна фабрика «Барвник»</option>
+              </select>
+            </div>
+
+            <button type="submit" class="action-btn green" style="width:100%;margin-top:8px;">
+              <i class="fa-solid fa-stamp"></i> ЗАТВЕРДИТИ ВИРОК ТА ОТРИМАТИ СЕРТИФІКАТ
+            </button>
+          </form>
+
+          <div id="court-msg" class="feedback-box" style="display:none;"></div>
+        </div>
+      `;
+    }
+
+    function handleCourtVerdict(e) {
+      e.preventDefault();
+      const v1 = document.getElementById('v1').value;
+      const v2 = document.getElementById('v2').value;
+      const v3 = document.getElementById('v3').value;
+      const v4 = document.getElementById('v4').value;
+      const box = document.getElementById('court-msg');
+      box.style.display = 'block';
+
+      if (v1 === 'safe_dye' && v2 === 'KI' && v3 === 'PbI2' && v4 === 'lead_factory') {
+        Sound.success();
+        awardStars(5);
+        saveState();
+        showToast('Судовий вирок затверджено одноголосно!');
+        advanceToStage(11);
+      } else {
+        Sound.error();
+        applyPenalty(0, 'q', 'помилка у вироку');
+        saveState();
+        box.className = 'feedback-box err';
+        box.innerHTML = `❌ <strong>Помилка в судовому акті!</strong> Перевірте всі 4 пункти на основі доказів на Дошці справи зліва.`;
+      }
+    }
+
+    // --- ЕТАП 11 (Фінальний сертифікат + Відправка до Google Таблиці) ---
+    function renderStageCertificate(container) {
+      penaltyKeys = {}; rewardGiven = false;
+      let finalRank = 'Молодший експерт-стажер';
+      if (gameState.stars >= 25 && gameState.coins >= 70) {
+        finalRank = 'Головний експерт-криміналіст з хімії';
+      } else if (gameState.stars >= 16) {
+        finalRank = 'Старший судовий хімік-лаборант';
+      }
+
+      const totalSec = gameState.startTime ? Math.max(1, Math.floor(((gameState.endTime || Date.now()) - gameState.startTime) / 1000)) : 0;
+      const mStr = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const sStr = String(totalSec % 60).padStart(2, '0');
+      const timeSpentStr = `${mStr}:${sStr}`;
+
+      container.innerHTML = `
+        <div id="printable-certificate" class="dossier-folder" style="border:4px double #5d4037;background:#fffdf9;padding:32px;">
+          <div class="stamp-badge green" style="font-size:1.15rem;transform:rotate(-5deg);">РОЗКРИТО</div>
+          <div style="text-align:center;border-bottom:2px solid #5d4037;padding-bottom:12px;margin-bottom:16px;">
+            <div style="font-family:var(--typewriter);font-size:0.9rem;font-weight:bold;color:#795548;letter-spacing:1px;">
+              МІНІСТЕРСТВО ЕКОЛОГІЇ ТА СУДОВОЇ ЕКСПЕРТИЗИ УКРАЇНИ
+            </div>
+            <h1 style="font-family:var(--typewriter);font-size:1.75rem;margin:8px 0;color:#212121;text-transform:uppercase;">
+              СЕРТИФІКАТ СУДОВОГО ХІМІКА
+            </h1>
+          </div>
+
+          <p style="font-family:var(--typewriter);font-size:1.05rem;line-height:1.7;margin:16px 0;text-align:center;">
+            Цим документом підтверджується, що курсант-слідчий<br>
+            <strong style="font-size:1.35rem;color:var(--ink-blue);border-bottom:2px solid;">${gameState.detectiveName || 'Коваленко Максим'}</strong><br>
+            <span>закладу освіти: <strong>${gameState.school || 'Ліцей № 4'}</strong> (${gameState.city || 'м. Київ'})</span><br>
+            успішно провів судово-хімічне розслідування <strong>«Справи № 9: Хто отруїв річку Йонку?»</strong>.
+          </p>
+
+          <div style="background:#f4ebe0;border:2px dashed #8d6e63;padding:16px;margin:18px 0;font-family:var(--typewriter);text-align:left;font-size:1rem;line-height:1.6;">
+            <div>🎖️ <strong>Присвоєне звання:</strong> <span style="color:var(--stamp-green);font-weight:bold;font-size:1.1rem;">${finalRank}</span></div>
+            <div>⭐ <strong>Зібрано криміналістичних зірок:</strong> ${gameState.stars} / 35</div>
+            <div>💰 <strong>Збережено бюджет реактивів:</strong> ${gameState.coins} ХімКоїнів (із 100)</div>
+            <div>⏱️ <strong>Витрачений час розслідування:</strong> ${timeSpentStr}</div>
+            <div>⚠️ <strong>Кількість зафіксованих помилок:</strong> ${gameState.mistakes}</div>
+            <div>⚖️ <strong>Вердикт суду:</strong> Акумуляторний завод «Свинець-М» визнано винним за доказами йонних реакцій осадження. Річку очищено.</div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;margin-top:24px;font-family:var(--typewriter);font-size:0.9rem;color:#5d4037;">
+            <div>Дата: <strong>${new Date().toLocaleDateString('uk-UA')}</strong></div>
+            <div>Печатка лабораторії: <strong>[ХімЕксперт • Справа № 9]</strong></div>
+            <div>Керівник розслідування: <strong>Проф. Йон</strong></div>
+          </div>
+
+          <!-- Кнопка відправки звіту до Google Таблиці -->
+          <div style="margin-top:22px;">
+            <button id="sendReportBtn" onclick="sendReportToGoogle()" class="action-btn red" style="width:100%;padding:14px;font-size:1.1rem;">
+              <i class="fa-solid fa-cloud-arrow-up"></i> ВІДПРАВИТИ ЗВІТ ДО БАЗИ ДАНИХ (Google Таблиця)
+            </button>
+            <div id="send-report-msg" class="feedback-box" style="display:none;margin-top:10px;"></div>
+          </div>
+
+          <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;">
+            <button onclick="downloadCertificate()" class="action-btn green">
+              <i class="fa-solid fa-download"></i> ЗБЕРЕГТИ СЕРТИФІКАТ (HTML)
+            </button>
+            <button onclick="window.print()" class="action-btn">
+              <i class="fa-solid fa-print"></i> ДРУКУВАТИ / ЗБЕРЕГТИ В PDF
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Функція відправки даних у Google Таблицю ---
+    async function sendReportToGoogle() {
+      if (gameState.reportSent) return;
+      const btn = document.getElementById('sendReportBtn');
+      const box = document.getElementById('send-report-msg');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ВІДПРАВКА ПРОТОКОЛУ...';
+      }
+
+      let finalRank = 'Молодший експерт-стажер';
+      if (gameState.stars >= 25 && gameState.coins >= 70) {
+        finalRank = 'Головний експерт-криміналіст з хімії';
+      } else if (gameState.stars >= 16) {
+        finalRank = 'Старший судовий хімік-лаборант';
+      }
+
+      const totalSec = gameState.startTime ? Math.max(1, Math.floor(((gameState.endTime || Date.now()) - gameState.startTime) / 1000)) : 0;
+      const mStr = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const sStr = String(totalSec % 60).padStart(2, '0');
+      const timeSpentStr = `${mStr}:${sStr}`;
+
+      const payload = {
+        timestamp: new Date().toLocaleString('uk-UA'),
+        studentName: gameState.detectiveName || 'Анонімний курсант',
+        studentGroup: gameState.school || 'Не вказано',
+        studentCity: gameState.city || 'Не вказано',
+        budgetRemaining: gameState.coins,
+        starsEarned: `${gameState.stars} / 35`,
+        rankTitle: finalRank,
+        timeElapsed: timeSpentStr,
+        mistakesCount: gameState.mistakes,
+        sessionId: gameState.sid,
+        mistakesByStage: JSON.stringify(gameState.stageMistakes),
+        accusedFactory: gameState.verdictData.accused,
+        cleaningReagent: gameState.verdictData.cleaning
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        gameState.reportSent = true;
+        saveState();
+        if (box) {
+          box.style.display = 'block';
+          box.className = 'feedback-box ok';
+          box.innerHTML = '✅ <strong>ЗВІТ УСПІШНО ЗАФІКСОВАНО В ЖУРНАЛІ РОЗСЛІДУВАНЬ!</strong> Дані внесено до Google Таблиці викладача.';
+        }
+        if (btn) {
+          btn.innerHTML = '<i class="fa-solid fa-check"></i> ЗВІТ УСПІШНО ВІДПРАВЛЕНО';
+        }
+        showToast('Звіт зафіксовано в базі даних!');
+      } catch (err) {
+        if (box) {
+          box.style.display = 'block';
+          box.className = 'feedback-box err';
+          box.innerHTML = '❌ <strong>Помилка передачі даних.</strong> Перевірте підключення до Інтернету або збережіть HTML-сертифікат вручну.';
+        }
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-rotate-right"></i> СПРОБУВАТИ ВІДПРАВИТИ ЩЕ РАЗ';
+        }
+      }
+    }
+
+    function downloadCertificate() {
+      const certNode = document.getElementById('printable-certificate');
+      if (!certNode) return;
+      const htmlContent = `
+        <!DOCTYPE html>
+        <html lang="uk">
+        <head>
+          <meta charset="UTF-8">
+          <title>Сертифікат - ${gameState.detectiveName || 'Хімічний детектив'}</title>
+          <style>
+            body { font-family: 'Courier New', monospace; background: #fdfaf3; padding: 40px; }
+            .cert { border: 4px double #3e2723; padding: 30px; max-width: 800px; margin: 0 auto; background: #fff; }
+            h1 { text-align: center; color: #1b5e20; }
+          </style>
+        </head>
+        <body>
+          <div class="cert">
+            ${certNode.innerHTML}
+          </div>
+        </body>
+        </html>
+      `;
+      const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `Сертифікат_ХімЕксперт_${(gameState.detectiveName || 'Слідчий').replace(/\s+/g, '_')}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      showToast('Сертифікат завантажено на пристрій!');
+    }
+
+    // --- Роутер етапів ---
+    function renderCurrentStage() {
+      const container = document.getElementById('app-container');
+      if (!container) return;
+
+      switch (gameState.stage) {
+        case 1: renderStageIntro(container); break;
+        case 2: renderStage1(container); break;
+        case 3: renderStage2(container); break;
+        case 4: renderStage3(container); break;
+        case 5: renderStage4(container); break;
+        case 6: renderStage5(container); break;
+        case 7: renderStage6(container); break;
+        case 8: renderStage7(container); break;
+        case 9: renderStage8(container); break;
+        case 10: renderStageCourt(container); break;
+        case 11: renderStageCertificate(container); break;
+        default: renderStageIntro(container);
+      }
+
+      updateHeaderUI();
+      updateEvidenceBoard();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderCurrentStage();
+    });
+  
+    // --- Індекси й заряди: перетворюємо Unicode-цифри на <sub>/<sup>
+    (function () {
+      const SUBM = {'₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9'};
+      const SUPM = {'⁰':'0','¹':'1','²':'2','³':'3','⁴':'4','⁵':'5','⁶':'6','⁷':'7','⁸':'8','⁹':'9','⁺':'+','⁻':'−'};
+      const TEST = /[\u2080-\u2089\u2070\u00B9\u00B2\u00B3\u2074-\u2079\u207A\u207B]/;
+      const RE = /([\u2080-\u2089]+)|([\u2070\u00B9\u00B2\u00B3\u2074-\u2079\u207A\u207B]+)/g;
+      function fix(root) {
+        const base = root.nodeType === 3 ? root.parentNode : root;
+        if (!base) return;
+        const list = [];
+        const w = document.createTreeWalker(base, NodeFilter.SHOW_TEXT);
+        let n;
+        while ((n = w.nextNode())) {
+          if (TEST.test(n.nodeValue) && !/^(SCRIPT|STYLE|TEXTAREA|OPTION|TITLE)$/.test(n.parentNode.nodeName)) list.push(n);
+        }
+        list.forEach(node => {
+          const s = node.nodeValue, frag = document.createDocumentFragment();
+          let last = 0;
+          s.replace(RE, (m, sb, sp, off) => {
+            frag.appendChild(document.createTextNode(s.slice(last, off)));
+            const el = document.createElement(sb ? 'sub' : 'sup');
+            el.textContent = [...m].map(c => (sb ? SUBM : SUPM)[c] || c).join('');
+            frag.appendChild(el);
+            last = off + m.length;
+            return m;
+          });
+          frag.appendChild(document.createTextNode(s.slice(last)));
+          node.parentNode.replaceChild(frag, node);
+        });
+      }
+      const obs = new MutationObserver(muts => {
+        obs.disconnect();
+        muts.forEach(m => m.addedNodes.forEach(nd => { if (nd.nodeType === 1 || nd.nodeType === 3) fix(nd); }));
+        obs.observe(document.body, { childList: true, subtree: true });
+      });
+      window.addEventListener('DOMContentLoaded', () => { fix(document.body); obs.observe(document.body, { childList: true, subtree: true }); });
+    })();
+  </script>
+</body>
+</html>
